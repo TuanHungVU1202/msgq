@@ -1,29 +1,16 @@
 package com.dpk;
 
-import org.springframework.amqp.core.Binding;
-import org.springframework.amqp.core.BindingBuilder;
-import org.springframework.amqp.core.Queue;
-import org.springframework.amqp.core.TopicExchange;
 import org.springframework.amqp.rabbit.annotation.EnableRabbit;
-import org.springframework.amqp.rabbit.annotation.RabbitListenerConfigurer;
-import org.springframework.amqp.rabbit.connection.ConnectionFactory;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import org.springframework.amqp.rabbit.listener.RabbitListenerEndpointRegistrar;
-import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
-import org.springframework.context.annotation.Bean;
-import org.springframework.messaging.converter.MappingJackson2MessageConverter;
-import org.springframework.messaging.handler.annotation.support.DefaultMessageHandlerMethodFactory;
-
-import com.dpk.config.ApplicationConfigReader;
 
 @EnableRabbit
 @SpringBootApplication
-public class MsgqApplication extends SpringBootServletInitializer{
+public class MsgqApplication extends SpringBootServletInitializer {
+	public static void main(String[] args) {
+		SpringApplication.run(MsgqApplication.class, args);
+	}
 
 //	@Autowired
 //	private ApplicationConfigReader applicationConfig;
@@ -35,11 +22,7 @@ public class MsgqApplication extends SpringBootServletInitializer{
 //	public void setApplicationConfig(ApplicationConfigReader applicationConfig) {
 //		this.applicationConfig = applicationConfig;
 //	}
-	
-	public static void main(String[] args) {
-		SpringApplication.run(MsgqApplication.class, args);
-	}
-	
+//	
 //	protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
 //		return application.sources(MsgqApplication.class);
 //	}
@@ -115,5 +98,4 @@ public class MsgqApplication extends SpringBootServletInitializer{
 //	public void configureRabbitListeners(final RabbitListenerEndpointRegistrar registrar) {
 //		registrar.setMessageHandlerMethodFactory(messageHandlerMethodFactory());
 //	}
-	
 }

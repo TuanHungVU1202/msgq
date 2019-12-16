@@ -16,11 +16,9 @@
 //import com.dpk.dto.UserDetails;
 //import com.dpk.util.ApplicationConstant;
 //
-//
 //@RestController
-//@RequestMapping(path = "/userservice")
+//@RequestMapping(path = "/user-service")
 //public class UserService {
-//
 //	private static final Logger log = LoggerFactory.getLogger(UserService.class);
 //
 //	private final RabbitTemplate rabbitTemplate;
@@ -50,10 +48,8 @@
 //		this.messageSender = messageSender;
 //	}
 //
-//
 //	@RequestMapping(path = "/add", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 //	public ResponseEntity<?> sendMessage(@RequestBody UserDetails user) {
-//
 //		String exchange = getApplicationConfig().getApp2Exchange();
 //		String routingKey = getApplicationConfig().getApp2RoutingKey();
 //
@@ -61,14 +57,9 @@
 //		try {
 //			messageSender.sendMessage(rabbitTemplate, exchange, routingKey, user);
 //			return new ResponseEntity<String>(ApplicationConstant.IN_QUEUE, HttpStatus.OK);
-//			
 //		} catch (Exception ex) {
 //			log.error("Exception occurred while sending message to the queue. Exception= {}", ex);
 //			return new ResponseEntity(ApplicationConstant.MESSAGE_QUEUE_SEND_ERROR, HttpStatus.INTERNAL_SERVER_ERROR);
 //		}
-//
 //	}
-//
-//
-//	
 //}
