@@ -1,25 +1,17 @@
 package com.dpk;
 
-import java.util.Arrays;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.AmqpRejectAndDontRequeueException;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.RestTemplate;
 
 import com.dpk.config.ApplicationConfigReader;
-import com.dpk.mapper.Mapper;
+import com.dpk.services.MessageService;
 
 /**
  * Message Listener for RabbitMQ
@@ -35,27 +27,15 @@ public class RabbitMQListener {
 	@Autowired
 	ApplicationConfigReader applicationConfigReader;
 
-	String URL = "http://localhost:9200/claim/details/1";
+	@Autowired
+	MessageService messageService;
 
 	@RabbitListener(queues = "${app.queue.name}")
 	public void receiveMessage(Message message) {
 		log.info("Received message: {} from app queue.", message);
 
 		try {
-			RestTemplate restTemplate = new RestTemplate();
-//			Claim claimDetails = new Claim();
-
-			Mapper byteToObj = new Mapper();
-
-			String dataToSend = byteToObj.byteToObject(message.getBody(), String.class);
-
-			HttpHeaders headers = new HttpHeaders();
-			headers.setContentType(MediaType.APPLICATION_JSON);
-			headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
-			log.info("here we go the received message " + dataToSend);
-			HttpEntity<String> httpEntity = new HttpEntity<String>(dataToSend, headers);
-			ResponseEntity<String> responseEntity = restTemplate.exchange(URL, HttpMethod.POST, httpEntity,
-					String.class);
+			messageService.receiveMessage(message);
 
 			log.info("Making API call");
 			log.info("Process exiting after API call");
