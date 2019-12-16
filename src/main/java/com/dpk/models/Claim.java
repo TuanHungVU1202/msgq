@@ -1,6 +1,6 @@
 package com.dpk.models;
 
-public class Policy {
+public class Claim {
 	private String policyNumber;
 	private String policyHolder;
 	private String insuredObject;

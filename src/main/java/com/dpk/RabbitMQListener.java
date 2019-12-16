@@ -1,6 +1,5 @@
 package com.dpk;
 
-import java.net.URL;
 import java.util.Arrays;
 
 import org.slf4j.Logger;
@@ -21,8 +20,6 @@ import org.springframework.web.client.RestTemplate;
 
 import com.dpk.config.ApplicationConfigReader;
 import com.dpk.mapper.Mapper;
-import com.dpk.models.Policy;
-import com.google.gson.Gson;
 
 /**
  * Message Listener for RabbitMQ
@@ -46,7 +43,7 @@ public class RabbitMQListener {
 
 		try {
 			RestTemplate restTemplate = new RestTemplate();
-			Policy policyDetails = new Policy();
+//			Claim claimDetails = new Claim();
 
 			Mapper byteToObj = new Mapper();
 
@@ -56,8 +53,9 @@ public class RabbitMQListener {
 			headers.setContentType(MediaType.APPLICATION_JSON);
 			headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
 			log.info("here we go the received message " + dataToSend);
-			HttpEntity<String> requestEntity = new HttpEntity<String>(dataToSend, headers);
-			ResponseEntity<String> exchange = restTemplate.exchange(URL, HttpMethod.POST, requestEntity, String.class);
+			HttpEntity<String> httpEntity = new HttpEntity<String>(dataToSend, headers);
+			ResponseEntity<String> responseEntity = restTemplate.exchange(URL, HttpMethod.POST, httpEntity,
+					String.class);
 
 			log.info("Making API call");
 			log.info("Process exiting after API call");
@@ -73,7 +71,6 @@ public class RabbitMQListener {
 			} else {
 				throw new AmqpRejectAndDontRequeueException(ex);
 			}
-
 		} catch (Exception e) {
 			log.error("Internal server error occured in API call. {}", e);
 			throw new AmqpRejectAndDontRequeueException(e);

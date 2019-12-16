@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 @RequestMapping(value = "/policy")
 public class PolicyViewController {
-
 	@PostMapping(value = "/search/{id}", headers = "Accept=application/json")
 	public ResponseEntity<String> postToEs(@RequestBody String body, @PathVariable String id) throws Exception {
 		return null;
