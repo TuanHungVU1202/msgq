@@ -1,5 +1,7 @@
 com\dpk\ServletInitializer.class
+com\dpk\controllers\PolicyViewController.class
 com\dpk\RabbitMQListener.class
+com\dpk\models\Policy.class
 com\dpk\MsgqApplication.class
 com\dpk\util\ApplicationConstant.class
 com\dpk\config\ApplicationConfigReader.class
