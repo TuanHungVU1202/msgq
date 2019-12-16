@@ -1,10 +1,6 @@
 package com.dpk.mapper;
 
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.List;
-import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,7 +8,6 @@ import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 
 public class Mapper {
@@ -38,7 +33,6 @@ public class Mapper {
 			e.printStackTrace();
 		}
 		return null;
-
 	}
 
 //	public static ResponseClaimObjectExt getfieldsResclaim(String input) {
@@ -74,6 +68,7 @@ public class Mapper {
 //		}
 //		return resClaimExt;
 //	}
+
 	private static JsonElement getJsonElement(com.google.gson.JsonObject convertedObject, String parent, String child) {
 		com.google.gson.JsonObject metaDataObject = convertedObject.getAsJsonObject(parent);
 		// com.google.gson.JsonObject metaDataObject =
@@ -83,7 +78,6 @@ public class Mapper {
 		} else {
 			return null;
 		}
-
 	}
 
 //	public static <T> List<String> getListField(List<T> filterlist, String methodName) {

@@ -11,7 +11,7 @@ import com.dpk.models.Claim;
 
 @Controller
 @RequestMapping(value = "/claim")
-public class PolicyController {
+public class ClaimController {
 	@PostMapping(value = "/details/{id}", headers = "Accept=application/json")
 	public ResponseEntity<Claim> getUserClaimDetails(@PathVariable String id) {
 		Claim claimDetails = new Claim();
