@@ -1,7 +1,7 @@
-D:\Spring_workspace\msgq\src\main\java\com\dpk\MsgqApplication.java
-D:\Spring_workspace\msgq\src\main\java\com\dpk\RabbitMQListener.java
-D:\Spring_workspace\msgq\src\main\java\com\dpk\RabbitMQSender.java
-D:\Spring_workspace\msgq\src\main\java\com\dpk\ServletInitializer.java
-D:\Spring_workspace\msgq\src\main\java\com\dpk\UserService.java
-D:\Spring_workspace\msgq\src\main\java\com\dpk\config\ApplicationConfigReader.java
-D:\Spring_workspace\msgq\src\main\java\com\dpk\util\ApplicationConstant.java
+D:\MTK\contemi-michael.tran-workspace\msgq\src\main\java\com\dpk\UserService.java
+D:\MTK\contemi-michael.tran-workspace\msgq\src\main\java\com\dpk\ServletInitializer.java
+D:\MTK\contemi-michael.tran-workspace\msgq\src\main\java\com\dpk\MsgqApplication.java
+D:\MTK\contemi-michael.tran-workspace\msgq\src\main\java\com\dpk\config\ApplicationConfigReader.java
+D:\MTK\contemi-michael.tran-workspace\msgq\src\main\java\com\dpk\RabbitMQSender.java
+D:\MTK\contemi-michael.tran-workspace\msgq\src\main\java\com\dpk\RabbitMQListener.java
+D:\MTK\contemi-michael.tran-workspace\msgq\src\main\java\com\dpk\util\ApplicationConstant.java
