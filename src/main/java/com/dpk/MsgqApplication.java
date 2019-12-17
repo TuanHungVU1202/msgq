@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
+import org.springframework.http.HttpStatus;
 
 import com.dpk.services.MessageService;
 
@@ -30,7 +31,16 @@ public class MsgqApplication extends SpringBootServletInitializer {
 	@PostConstruct
 	public void AppStartUp() throws IOException {
 		log.info("Initializing Mapping for Elasticsearch");
-		messageService.setMapping();
+		try {
+			if(!HttpStatus.OK.equals(messageService.getMappingStatus())){
+				messageService.setMapping();
+			} 
+				
+			
+		} catch (Exception e) {
+			messageService.setMapping();
+			//e.printStackTrace();
+		}
 	}
 //	@Autowired
 //	private ApplicationConfigReader applicationConfig;
