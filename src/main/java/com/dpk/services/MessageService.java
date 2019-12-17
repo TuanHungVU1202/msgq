@@ -6,4 +6,6 @@ import org.springframework.amqp.core.Message;
 
 public interface MessageService {
 	public void receiveMessage(Message message) throws IOException;
+	
+	public void setMapping() throws IOException;
 }

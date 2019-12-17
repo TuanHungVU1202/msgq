@@ -35,6 +35,7 @@ public class RabbitMQListener {
 		log.info("Received message: {} from app queue.", message);
 
 		try {
+			//Handling message
 			messageService.receiveMessage(message);
 
 			log.info("Making API call");

@@ -1,17 +1,37 @@
 package com.dpk;
 
+import java.io.IOException;
+
+import javax.annotation.PostConstruct;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.annotation.EnableRabbit;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 
+import com.dpk.services.MessageService;
+
 @EnableRabbit
 @SpringBootApplication
 public class MsgqApplication extends SpringBootServletInitializer {
+
+	private static final Logger log = LoggerFactory.getLogger(MsgqApplication.class);
+
+	@Autowired
+	MessageService messageService;
+
 	public static void main(String[] args) {
 		SpringApplication.run(MsgqApplication.class, args);
 	}
 
+	@PostConstruct
+	public void AppStartUp() throws IOException {
+		log.info("Initializing Mapping for Elasticsearch");
+		messageService.setMapping();
+	}
 //	@Autowired
 //	private ApplicationConfigReader applicationConfig;
 //	
