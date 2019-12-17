@@ -13,7 +13,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.http.HttpStatus;
 
-import com.dpk.services.MessageService;
+import com.dpk.services.ClaimService;
 
 @EnableRabbit
 @SpringBootApplication
@@ -22,7 +22,7 @@ public class MsgqApplication extends SpringBootServletInitializer {
 	private static final Logger log = LoggerFactory.getLogger(MsgqApplication.class);
 
 	@Autowired
-	MessageService messageService;
+	ClaimService claimService;
 
 	public static void main(String[] args) {
 		SpringApplication.run(MsgqApplication.class, args);
@@ -32,13 +32,13 @@ public class MsgqApplication extends SpringBootServletInitializer {
 	public void AppStartUp() throws IOException {
 		log.info("Initializing Mapping for Elasticsearch");
 		try {
-			if(!HttpStatus.OK.equals(messageService.getMappingStatus())){
-				messageService.setMapping();
+			if(!HttpStatus.OK.equals(claimService.getMappingStatus())){
+				claimService.setMapping();
 			} 
 				
 			
 		} catch (Exception e) {
-			messageService.setMapping();
+			claimService.setMapping();
 			//e.printStackTrace();
 		}
 	}

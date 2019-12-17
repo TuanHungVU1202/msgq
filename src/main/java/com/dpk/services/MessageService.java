@@ -8,7 +8,7 @@ import org.springframework.http.HttpStatus;
 public interface MessageService {
 	public void receiveMessage(Message message) throws IOException;
 	
-	public void setMapping() throws IOException;
-	
-	public HttpStatus getMappingStatus();
+//	public void setMapping() throws IOException;
+//	
+//	public HttpStatus getMappingStatus();
 }
