@@ -16,8 +16,7 @@ import com.dpk.mapper.Mapper;
 
 @Service
 public class MessageServiceImpl implements MessageService {
-
-	String URL = "http://localhost:9600/claim/details/1";
+	String url = "http://localhost:9600/claim/details/1";
 
 	@Override
 	public void receiveMessage(Message message) throws IOException {
@@ -28,12 +27,11 @@ public class MessageServiceImpl implements MessageService {
 
 		String dataToSend = byteToObj.byteToObject(message.getBody(), String.class);
 
-		HttpHeaders headers = new HttpHeaders();
-		headers.setContentType(MediaType.APPLICATION_JSON);
-		headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+		HttpHeaders httpHeaders = new HttpHeaders();
+		httpHeaders.setContentType(MediaType.APPLICATION_JSON);
+		httpHeaders.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
 
-		HttpEntity<String> httpEntity = new HttpEntity<String>(dataToSend, headers);
-		ResponseEntity<String> responseEntity = restTemplate.exchange(URL, HttpMethod.POST, httpEntity, String.class);
+		HttpEntity<String> httpEntity = new HttpEntity<String>(dataToSend, httpHeaders);
+		ResponseEntity<String> responseEntity = restTemplate.exchange(url, HttpMethod.POST, httpEntity, String.class);
 	}
-
 }

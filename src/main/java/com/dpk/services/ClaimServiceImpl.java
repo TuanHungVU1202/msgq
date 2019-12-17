@@ -17,9 +17,9 @@ import com.google.gson.Gson;
 
 @Service
 public class ClaimServiceImpl implements ClaimService {
-	String URL_SET_MAPPING = "http://localhost:9600/claim";
-	String URL_CHECK_STATUS = "http://localhost:9600/claim/details/_mapping";
-	String URL_SEARCH = "http://localhost:9600/claim/details/_search";
+	String URL_SET_MAPPING = "http://${elasticsearch.base.url}${elasticsearch.index.uri}";
+	String URL_CHECK_STATUS = "http://${elasticsearch.base.url}${elasticsearch.index.uri}${elasticsearch.type.uri}/_mapping";
+	String URL_SEARCH = "http://${elasticsearch.base.url}${elasticsearch.index.uri}${elasticsearch.type.uri}/_search";
 
 	String idToCreate;
 
