@@ -73,7 +73,7 @@ public class Mapper {
 		com.google.gson.JsonObject metaDataObject = convertedObject.getAsJsonObject(parent);
 		// com.google.gson.JsonObject metaDataObject =
 		// convertedObject.getAsJsonObject(META_DATA);
-		if (metaDataObject != null) {
+		if (null != metaDataObject) {
 			return metaDataObject.get(child);
 		} else {
 			return null;

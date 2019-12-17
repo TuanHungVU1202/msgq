@@ -41,7 +41,7 @@ public class ApplicationConfigReader implements RabbitListenerConfigurer {
 //	
 //	@Value("${app1.routing.key}")
 //	private String app1RoutingKey;
-
+//
 //	@Value("${app2.exchange.name}")
 //	private String app2Exchange;
 //	
@@ -50,6 +50,7 @@ public class ApplicationConfigReader implements RabbitListenerConfigurer {
 //	
 //	@Value("${app2.routing.key}")
 //	private String app2RoutingKey;
+
 	@Bean
 	public TopicExchange appExchange() {
 		return new TopicExchange(appExChangeName);
@@ -72,7 +73,7 @@ public class ApplicationConfigReader implements RabbitListenerConfigurer {
 //				.backOffOptions(1, 1, 1)
 //				.build();
 //	}
-
+//
 //	@Bean(name = "rabbitListenerContainerFactory")
 //    public SimpleRabbitListenerContainerFactory simpleRabbitListenerContainerFactory(
 //            SimpleRabbitListenerContainerFactoryConfigurer configurer,
@@ -88,7 +89,7 @@ public class ApplicationConfigReader implements RabbitListenerConfigurer {
 ////        factory.setRecoveryBackOff(recoveryBackOff);
 //        return factory;
 //    }
-
+//
 //	@Bean
 //	public ConnectionFactory connectionFactory() {
 //		com.rabbitmq.client.ConnectionFactory connectionFactory = new com.rabbitmq.client.ConnectionFactory();
