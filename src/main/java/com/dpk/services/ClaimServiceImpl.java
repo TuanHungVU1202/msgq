@@ -3,7 +3,6 @@ package com.dpk.services;
 import java.io.IOException;
 import java.util.Arrays;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -18,22 +17,28 @@ import com.google.gson.Gson;
 
 @Service
 public class ClaimServiceImpl implements ClaimService {
-	@Value("${elasticsearch.base.url}")
-	private String elasticsearchBaseUrl;
+//	@Value("${elasticsearch.base.url}")
+//	private String elasticsearchBaseUrl;
+//
+//	@Value("${elasticsearch.index.uri}")
+//	private String elasticsearchIndexUri;
+//
+//	@Value("${elasticsearch.type.uri}")
+//	private String elasticsearchTypeUri;
+//
+//	String URL_SET_MAPPING = "http://" + elasticsearchBaseUrl + "/" + elasticsearchIndexUri;
+//
+//	String URL_CHECK_STATUS = "http://" + elasticsearchBaseUrl + "/" + elasticsearchIndexUri + "/"
+//			+ elasticsearchTypeUri;
+//
+//	String URL_SEARCH = "http://" + elasticsearchBaseUrl + "/" + elasticsearchIndexUri + "/" + elasticsearchTypeUri
+//			+ "/_search";
 
-	@Value("${elasticsearch.index.uri}")
-	private String elasticsearchIndexUri;
+	String URL_SET_MAPPING = "http://localhost:9600/claim";
 
-	@Value("${elasticsearch.type.uri}")
-	private String elasticsearchTypeUri;
+	String URL_CHECK_STATUS = "http://localhost:9600/claim/details/_mapping";
 
-	String URL_SET_MAPPING = "http://" + elasticsearchBaseUrl + "/" + elasticsearchIndexUri;
-
-	String URL_CHECK_STATUS = "http://" + elasticsearchBaseUrl + "/" + elasticsearchIndexUri + "/"
-			+ elasticsearchTypeUri;
-
-	String URL_SEARCH = "http://" + elasticsearchBaseUrl + "/" + elasticsearchIndexUri + "/" + elasticsearchTypeUri
-			+ "/_search";
+	String URL_SEARCH = "http://localhost:9600/claim/details/_search";
 
 	String idToCreate;
 
