@@ -8,10 +8,12 @@ import com.dpk.models.Claim;
 
 public interface ClaimService {
 	public void getUserClaimDetails();
-	
+
 	public void setMapping() throws IOException;
-	
+
 	public HttpStatus getMappingStatus();
-	
+
 	public String createClaim(Claim claimBody, String id);
+
+	public void getAll();
 }

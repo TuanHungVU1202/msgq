@@ -7,7 +7,6 @@ import org.springframework.amqp.core.Message;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -19,7 +18,7 @@ import com.dpk.mapper.Mapper;
 public class MessageServiceImpl implements MessageService {
 
 	String URL = "http://localhost:9600/claim/details/1";
-	
+
 	@Override
 	public void receiveMessage(Message message) throws IOException {
 		RestTemplate restTemplate = new RestTemplate();

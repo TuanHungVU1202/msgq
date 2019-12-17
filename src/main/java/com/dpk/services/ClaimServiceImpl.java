@@ -3,7 +3,6 @@ package com.dpk.services;
 import java.io.IOException;
 import java.util.Arrays;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -13,16 +12,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import com.dpk.mapper.Mapper;
 import com.dpk.models.Claim;
-import com.dpk.util.ApplicationConstant;
 import com.google.gson.Gson;
 
 @Service
 public class ClaimServiceImpl implements ClaimService {
-
 	String URL_SET_MAPPING = "http://localhost:9600/claim";
 	String URL_CHECK_STATUS = "http://localhost:9600/claim/details/_mapping";
+	String URL_SEARCH = "http://localhost:9600/claim/details/_search";
 
 	String idToCreate;
 
@@ -84,6 +81,7 @@ public class ClaimServiceImpl implements ClaimService {
 		HttpEntity<String> httpEntity = new HttpEntity<String>(headers);
 		ResponseEntity<String> responseEntity = restTemplate.exchange(URL_CHECK_STATUS, HttpMethod.GET, httpEntity,
 				String.class);
+
 		return responseEntity.getStatusCode();
 	}
 
@@ -103,8 +101,21 @@ public class ClaimServiceImpl implements ClaimService {
 		HttpEntity<String> httpEntity = new HttpEntity<String>(jsonInString, headers);
 		ResponseEntity<String> responseEntity = restTemplate.exchange(URL_CREATE, HttpMethod.PUT, httpEntity,
 				String.class);
-		
-		return null;
+
+		return jsonInString;
 	}
 
+	@Override
+	public void getAll() {
+		RestTemplate restTemplate = new RestTemplate();
+
+		HttpHeaders httpHeaders = new HttpHeaders();
+		httpHeaders.setContentType(MediaType.APPLICATION_JSON);
+		httpHeaders.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+
+		HttpEntity<String> httpEntity = new HttpEntity<String>(httpHeaders);
+
+		ResponseEntity<String> responseEntity = restTemplate.exchange(URL_SEARCH, HttpMethod.GET, httpEntity,
+				String.class);
+	}
 }
