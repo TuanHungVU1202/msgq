@@ -11,13 +11,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.dpk.models.Claim;
-import com.dpk.services.ClaimService;
+import com.dpk.services.SearchService;
 
 @Controller
 @RequestMapping(value = "/claim")
-public class ClaimController {
+public class SearchController {
 	@Autowired
-	ClaimService claimService;
+	SearchService claimService;
 
 	@GetMapping(value = "/get-all", headers = "Accept=application/json")
 	public ResponseEntity<String> getAll() {

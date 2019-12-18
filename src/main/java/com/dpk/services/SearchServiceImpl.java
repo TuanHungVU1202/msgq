@@ -16,7 +16,7 @@ import com.dpk.models.Claim;
 import com.google.gson.Gson;
 
 @Service
-public class ClaimServiceImpl implements ClaimService {
+public class SearchServiceImpl implements SearchService {
 //	@Value("${elasticsearch.base.url}")
 //	private String elasticsearchBaseUrl;
 //

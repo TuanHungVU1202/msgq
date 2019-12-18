@@ -2,7 +2,7 @@ package com.dpk.models;
 
 public class Claim {
 	private String policyNumber;
-	private String policyHolder;
+	private String policyholder;
 	private String insuredObject;
 	private String startDate;
 	private String endDate;
@@ -15,11 +15,11 @@ public class Claim {
 		super();
 	}
 
-	public Claim(String policyNumber, String policyHolder, String insuredObject, String startDate, String endDate,
+	public Claim(String policyNumber, String policyholder, String insuredObject, String startDate, String endDate,
 			String productType, Long insuredSum, String premium, String dateOfPayment) {
 		super();
 		this.policyNumber = policyNumber;
-		this.policyHolder = policyHolder;
+		this.policyholder = policyholder;
 		this.insuredObject = insuredObject;
 		this.startDate = startDate;
 		this.endDate = endDate;
@@ -37,12 +37,12 @@ public class Claim {
 		this.policyNumber = policyNumber;
 	}
 
-	public String getPolicyHolder() {
-		return policyHolder;
+	public String getPolicyholder() {
+		return policyholder;
 	}
 
-	public void setPolicyHolder(String policyHolder) {
-		this.policyHolder = policyHolder;
+	public void setPolicyholder(String policyholder) {
+		this.policyholder = policyholder;
 	}
 
 	public String getInsuredObject() {
