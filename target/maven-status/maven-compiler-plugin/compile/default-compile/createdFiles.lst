@@ -1,12 +1,13 @@
 com\dpk\ServletInitializer.class
-com\dpk\services\ClaimService.class
-com\dpk\services\ClaimServiceImpl.class
+com\dpk\models\ClaimDetails.class
+com\dpk\models\ClaimList.class
 com\dpk\config\ApplicationConfigReader.class
 com\dpk\models\Claim.class
 com\dpk\RabbitMQSender.class
-com\dpk\controllers\PolicyViewController.class
+com\dpk\services\SearchServiceImpl.class
 com\dpk\RabbitMQListener.class
-com\dpk\controllers\PolicyController.class
+com\dpk\services\SearchService.class
+com\dpk\controllers\SearchController.class
 com\dpk\mapper\Mapper.class
 com\dpk\MsgqApplication.class
 com\dpk\util\ApplicationConstant.class

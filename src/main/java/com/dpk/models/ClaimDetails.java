@@ -17,7 +17,7 @@ public class ClaimDetails {
 	private String nameofHospital;
 	private String dateofAdmission;
 	private String dateofDischarge;
-	private Long totalClaimAmount;
+	private String totalClaimAmount;
 	private Integer numberOfDaysClaimed;
 	private String bankorCash;
 	private String accountNumber;
@@ -156,11 +156,11 @@ public class ClaimDetails {
 		this.dateofDischarge = dateofDischarge;
 	}
 
-	public Long getTotalClaimAmount() {
+	public String getTotalClaimAmount() {
 		return totalClaimAmount;
 	}
 
-	public void setTotalClaimAmount(Long totalClaimAmount) {
+	public void setTotalClaimAmount(String totalClaimAmount) {
 		this.totalClaimAmount = totalClaimAmount;
 	}
 

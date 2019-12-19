@@ -19,20 +19,16 @@ import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import com.dpk.RabbitMQListener;
 import com.dpk.common.Utils;
 import com.dpk.mapper.Mapper;
 import com.dpk.models.Claim;
 import com.dpk.models.ClaimDetails;
 import com.dpk.models.ClaimList;
 import com.google.gson.Gson;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 @Service
 public class SearchServiceImpl implements SearchService {
-
 	private static final Logger log = LoggerFactory.getLogger(SearchServiceImpl.class);
 //	@Value("${elasticsearch.base.url}")
 //	private String elasticsearchBaseUrl;
@@ -157,7 +153,6 @@ public class SearchServiceImpl implements SearchService {
 
 	@Override
 	public String receiveMessage(Message message) throws IOException {
-
 		RestTemplate restTemplate = new RestTemplate();
 		restTemplate.getMessageConverters().add(0, new StringHttpMessageConverter(Charset.forName("UTF-8")));
 //		Claim claimDetails = new Claim();
@@ -169,9 +164,8 @@ public class SearchServiceImpl implements SearchService {
 		String jsonRawString = parser.parse(dataToSend).getAsString();
 		JSONObject json = Utils.parseToJsonObject(jsonRawString);
 
-		// TODO: Mapping data to claimDetails
 		mapToClaimDetails(json);
-		// TODO: Mapping data to Claim list
+
 		mapToClaimList(json);
 
 		// Putting data to elasticsearch
@@ -188,15 +182,112 @@ public class SearchServiceImpl implements SearchService {
 
 	@Override
 	public ClaimDetails mapToClaimDetails(JSONObject json) {
-		// TODO Auto-generated method stub
-		return null;
+		ClaimDetails claimDetails = new ClaimDetails();
+		try {
+			String getClaimDetails = json.getJSONObject("claim").getString("policyHolder");
+			claimDetails.setPolicyholder(getClaimDetails);
+
+			getClaimDetails = json.getJSONObject("claim").getString("policyNumber");
+			claimDetails.setPolicyNumber(getClaimDetails);
+
+			getClaimDetails = json.getJSONObject("claimRequest").getJSONObject("productDetails")
+					.getString("policyStartDate");
+			claimDetails.setPolicyStartDate(getClaimDetails);
+
+			getClaimDetails = json.getJSONObject("claimRequest").getJSONObject("productDetails")
+					.getString("policyEndDate");
+			claimDetails.setPolicyEndDate(getClaimDetails);
+
+			getClaimDetails = json.getJSONObject("claim").getString("createdDate");
+			claimDetails.setCreatedDate(getClaimDetails);
+
+			getClaimDetails = json.getJSONObject("claim").getString("lastModified");
+			claimDetails.setLastModified(getClaimDetails);
+
+			getClaimDetails = json.getJSONObject("claim").getString("status");
+			claimDetails.setStatus(getClaimDetails);
+
+			getClaimDetails = json.getJSONObject("claimRequest").getJSONObject("claimantDetails")
+					.getString("claimantName");
+			claimDetails.setClaimantName(getClaimDetails);
+
+			getClaimDetails = json.getJSONObject("claimRequest").getJSONObject("proposerDetails")
+					.getString("proposerName");
+			claimDetails.setProposerName(getClaimDetails);
+
+			getClaimDetails = json.getJSONObject("claimRequest").getJSONObject("proposerDetails")
+					.getString("dateOfBirth");
+			claimDetails.setDateOfBirth(getClaimDetails);
+
+			getClaimDetails = json.getJSONObject("claimRequest").getJSONObject("treatmentDetails")
+					.getString("dateOfVisit");
+			claimDetails.setDateOfVisit(getClaimDetails);
+
+			getClaimDetails = json.getJSONObject("claimRequest").getJSONObject("causesOfClaims")
+					.getString("causeOfIncident");
+			claimDetails.setCauseOfIncident(getClaimDetails);
+
+			getClaimDetails = json.getJSONObject("claimRequest").getJSONObject("treatmentDetails")
+					.getString("nameofClinics");
+			claimDetails.setNameofClinics(getClaimDetails);
+
+			getClaimDetails = json.getJSONObject("claimRequest").getJSONObject("treatmentDetails")
+					.getString("nameofHospital");
+			claimDetails.setNameofHospital(getClaimDetails);
+
+			getClaimDetails = json.getJSONObject("claimRequest").getJSONObject("treatmentDetails")
+					.getString("dateofAdmission");
+			claimDetails.setDateofAdmission(getClaimDetails);
+
+			getClaimDetails = json.getJSONObject("claimRequest").getJSONObject("treatmentDetails")
+					.getString("dateofDischarge");
+			claimDetails.setDateofDischarge(getClaimDetails);
+
+			getClaimDetails = json.getJSONObject("claimRequest").getJSONObject("paymentDetails")
+					.getString("totalClaimAmount");
+			claimDetails.setTotalClaimAmount(getClaimDetails);
+
+			getClaimDetails = json.getJSONObject("claimRequest").getJSONObject("paymentDetails")
+					.getString("bankorCash");
+			claimDetails.setBankorCash(getClaimDetails);
+
+			getClaimDetails = json.getJSONObject("claimRequest").getJSONObject("paymentDetails")
+					.getString("accountNumber");
+			claimDetails.setAccountNumber(getClaimDetails);
+
+			getClaimDetails = json.getJSONObject("claimRequest").getJSONObject("paymentDetails")
+					.getString("nameofBank");
+			claimDetails.setNameofBank(getClaimDetails);
+
+			getClaimDetails = json.getJSONObject("claimRequest").getJSONObject("paymentDetails")
+					.getString("bankBranch");
+			claimDetails.setBankBranch(getClaimDetails);
+
+			getClaimDetails = json.getJSONObject("claimRequest").getJSONObject("paymentDetails")
+					.getString("nameofBankAccountsHolder");
+			claimDetails.setNameofBankAccountsHolder(getClaimDetails);
+
+			getClaimDetails = json.getJSONObject("claimRequest").getJSONObject("supporingDocuments")
+					.getString("hospitalDischargePaper");
+			claimDetails.setHospitalDischargePaper(getClaimDetails);
+
+			getClaimDetails = json.getJSONObject("claimRequest").getJSONObject("supporingDocuments")
+					.getString("hospitalbillrecipt");
+			claimDetails.setHospitalbillrecipt(getClaimDetails);
+
+			getClaimDetails = json.getJSONObject("claimRequest").getJSONObject("supporingDocuments")
+					.getString("prescription");
+			claimDetails.setPrescription(getClaimDetails);
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		return claimDetails;
 	}
 
 	@Override
 	public ClaimList mapToClaimList(JSONObject json) {
 		ClaimList claimList = new ClaimList();
 		try {
-
 			String getClaimList = json.getJSONObject("claim").getString("claimId");
 			claimList.setClaimId(getClaimList);
 

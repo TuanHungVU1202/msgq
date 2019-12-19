@@ -11,24 +11,6 @@ public class Claim {
 	private String premium;
 	private String dateOfPayment;
 
-	public Claim() {
-		super();
-	}
-
-	public Claim(String policyNumber, String policyholder, String insuredObject, String startDate, String endDate,
-			String productType, Long insuredSum, String premium, String dateOfPayment) {
-		super();
-		this.policyNumber = policyNumber;
-		this.policyholder = policyholder;
-		this.insuredObject = insuredObject;
-		this.startDate = startDate;
-		this.endDate = endDate;
-		this.productType = productType;
-		this.insuredSum = insuredSum;
-		this.premium = premium;
-		this.dateOfPayment = dateOfPayment;
-	}
-
 	public String getPolicyNumber() {
 		return policyNumber;
 	}
