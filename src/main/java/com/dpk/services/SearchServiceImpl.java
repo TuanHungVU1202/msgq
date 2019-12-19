@@ -164,18 +164,26 @@ public class SearchServiceImpl implements SearchService {
 		String jsonRawString = parser.parse(dataToSend).getAsString();
 		JSONObject json = Utils.parseToJsonObject(jsonRawString);
 
-		mapToClaimDetails(json);
-
-		mapToClaimList(json);
+		// TODO: Mapping data to claimDetails
+		ClaimDetails returnClaimDetails = mapToClaimDetails(json);
+		// TODO: Mapping data to Claim list
+		ClaimList returnClaimList = mapToClaimList(json);
 
 		// Putting data to elasticsearch
-		String url = "http://localhost:9600/claim/details/1";
+		String URL_CLAIM_DETAILS = "http://localhost:9600/claim/details/1";
+		String URL_CLAIM_LIST = "http://localhost:9600/claim/list/1";
+
 		HttpHeaders httpHeaders = new HttpHeaders();
 		httpHeaders.setContentType(MediaType.APPLICATION_JSON);
 		httpHeaders.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
 
-		HttpEntity<String> httpEntity = new HttpEntity<String>(jsonRawString, httpHeaders);
-		ResponseEntity<String> responseEntity = restTemplate.exchange(url, HttpMethod.PUT, httpEntity, String.class);
+		HttpEntity<ClaimList> claimListEntity = new HttpEntity<ClaimList>(returnClaimList, httpHeaders);
+		HttpEntity<ClaimDetails> claimDetailsEntity = new HttpEntity<ClaimDetails>(returnClaimDetails, httpHeaders);
+
+		ResponseEntity<String> responseClaimList = restTemplate.exchange(URL_CLAIM_LIST, HttpMethod.PUT,
+				claimListEntity, String.class);
+		ResponseEntity<String> responseClaimDetails = restTemplate.exchange(URL_CLAIM_DETAILS, HttpMethod.PUT,
+				claimDetailsEntity, String.class);
 
 		return null;
 	}
@@ -306,6 +314,9 @@ public class SearchServiceImpl implements SearchService {
 
 			getClaimList = json.getJSONObject("claim").getString("lastModified");
 			claimList.setLastModified(getClaimList);
+			
+			getClaimList = json.getJSONObject("claim").getString("status");
+			claimList.setStatus(getClaimList);
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
