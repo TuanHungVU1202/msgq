@@ -23,6 +23,8 @@ import com.dpk.RabbitMQListener;
 import com.dpk.common.Utils;
 import com.dpk.mapper.Mapper;
 import com.dpk.models.Claim;
+import com.dpk.models.ClaimDetails;
+import com.dpk.models.ClaimList;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -163,22 +165,14 @@ public class SearchServiceImpl implements SearchService {
 		Mapper byteToObj = new Mapper();
 		JsonParser parser = new JsonParser();
 
-//		String recievedData = byteToObj.byteToObject(message.getBody(), String.class);
 		String dataToSend = new String(message.getBody(), Charset.forName("UTF-8"));
-
 		String jsonRawString = parser.parse(dataToSend).getAsString();
-//		JsonObject jsonObject = parser.parse(dataToSend).getAsJsonObject();
-//		log.info("getting claimRequest: "+jsonObject.get("claimRequest").getAsString());
-
-		// Mapping data to claimDetails
 		JSONObject json = Utils.parseToJsonObject(jsonRawString);
-		try {
-			JSONObject getClaim = json.getJSONObject("claimRequest");
-			log.info("get claim is: "+getClaim);
-		} catch (JSONException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+
+		// TODO: Mapping data to claimDetails
+		mapToClaimDetails(json);
+		// TODO: Mapping data to Claim list
+		mapToClaimList(json);
 
 		// Putting data to elasticsearch
 		String url = "http://localhost:9600/claim/details/1";
@@ -192,17 +186,38 @@ public class SearchServiceImpl implements SearchService {
 		return null;
 	}
 
-	
 	@Override
-	public void mapToClaimList(String jsonRawString) {
+	public ClaimDetails mapToClaimDetails(JSONObject json) {
 		// TODO Auto-generated method stub
-
+		return null;
 	}
 
 	@Override
-	public void mapToClaimDetails(String message) {
-		// TODO Auto-generated method stub
-		
-	}
+	public ClaimList mapToClaimList(JSONObject json) {
+		ClaimList claimList = new ClaimList();
+		try {
 
+			String getClaimList = json.getJSONObject("claim").getString("claimId");
+			claimList.setClaimId(getClaimList);
+
+			getClaimList = json.getJSONObject("claim").getString("claimant");
+			claimList.setClaimantName(getClaimList);
+
+			getClaimList = json.getJSONObject("claimRequest").getJSONObject("proposerDetails")
+					.getString("proposerName");
+			claimList.setProposerName(getClaimList);
+
+			getClaimList = json.getJSONObject("claim").getString("policyNumber");
+			claimList.setPolicyNumber(getClaimList);
+
+			getClaimList = json.getJSONObject("claim").getString("createdDate");
+			claimList.setCreatedDate(getClaimList);
+
+			getClaimList = json.getJSONObject("claim").getString("lastModified");
+			claimList.setLastModified(getClaimList);
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		return claimList;
+	}
 }
