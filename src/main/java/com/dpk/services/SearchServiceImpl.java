@@ -24,11 +24,12 @@ import com.dpk.mapper.Mapper;
 import com.dpk.models.Claim;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 @Service
 public class SearchServiceImpl implements SearchService {
-	
+
 	private static final Logger log = LoggerFactory.getLogger(SearchServiceImpl.class);
 //	@Value("${elasticsearch.base.url}")
 //	private String elasticsearchBaseUrl;
@@ -54,8 +55,6 @@ public class SearchServiceImpl implements SearchService {
 	String URL_SEARCH = "http://localhost:9600/claim/details/_search";
 
 	String idToCreate;
-
-	
 
 	@Override
 	public void getUserClaimDetails() {
@@ -155,7 +154,7 @@ public class SearchServiceImpl implements SearchService {
 
 	@Override
 	public String receiveMessage(Message message) throws IOException {
-		
+
 		RestTemplate restTemplate = new RestTemplate();
 		restTemplate.getMessageConverters().add(0, new StringHttpMessageConverter(Charset.forName("UTF-8")));
 //		Claim claimDetails = new Claim();
@@ -164,21 +163,14 @@ public class SearchServiceImpl implements SearchService {
 		JsonParser parser = new JsonParser();
 
 //		String recievedData = byteToObj.byteToObject(message.getBody(), String.class);
-		String dataToSend = new String(message.getBody(),Charset.forName("UTF-8"));
+		String dataToSend = new String(message.getBody(), Charset.forName("UTF-8"));
 
-//			JSONObject jsonObject = new JSONObject(dataToSend);
-			String jsonRawString = parser.parse(dataToSend).getAsString();
-			try {
-				JSONObject jsonObject = new JSONObject(jsonRawString);
-			} catch (JSONException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-//			String jsonInString = new Gson().toJson(jsonRawString);
-			log.info("claimRequest is: "+ jsonRawString);
+		String jsonRawString = parser.parse(dataToSend).getAsString();
+		JsonObject jsonObject = parser.parse(dataToSend).getAsJsonObject();
+		log.info("getting claimRequest: "+jsonObject.get("claimRequest").getAsString());
 
-		//Mapping data to claimDetails
-//		sendToClaimDetails(dataToSend);
+		// Mapping data to claimDetails
+		mapToClaimDetails(jsonRawString);
 
 		// Putting data to elasticsearch
 		String url = "http://localhost:9600/claim/details/1";
@@ -189,31 +181,24 @@ public class SearchServiceImpl implements SearchService {
 		HttpEntity<String> httpEntity = new HttpEntity<String>(jsonRawString, httpHeaders);
 		ResponseEntity<String> responseEntity = restTemplate.exchange(url, HttpMethod.PUT, httpEntity, String.class);
 
-		return dataToSend;
+		return null;
 	}
 
 	@Override
-	public void sendToClaimDetails(String message) {
-		log.info("sending data to ClaimDetails: " + message);
-		
-		//TODO: parse "message" to string to get key:value
-//		String test = new String(message.getBody(),Charset.forName("UTF-8"));
+	public void mapToClaimDetails(String jsonRawString) {
+		log.info("mapping data to ClaimDetails: " + jsonRawString);
+
 		JSONObject jsonObject;
 		try {
-			jsonObject = new JSONObject(message);
-			log.info("claimRequest is: "+ jsonObject);
+			jsonObject = new JSONObject(jsonRawString);
 		} catch (JSONException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-//		Gson gson = new Gson();
-//		String jsonStringOutString = gson.fromJson(message, String.class);
-//		log.info("claimRequest is: "+ jsonStringOutString);
-		
+
 	}
 
 	@Override
-	public void sendToClaimList(String message) {
+	public void mapToClaimList(String jsonRawString) {
 		// TODO Auto-generated method stub
 
 	}

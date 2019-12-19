@@ -21,7 +21,7 @@ public interface SearchService {
 	public void getAll();
 	
 	// Mapping data from Rabbitmq to models
-	public void sendToClaimDetails(String message);
+	public void mapToClaimDetails(String message);
 	
-	public void sendToClaimList(String message);
+	public void mapToClaimList(String message);
 }
