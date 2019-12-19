@@ -7,6 +7,8 @@ import java.util.Arrays;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.Message;
+import org.springframework.boot.configurationprocessor.json.JSONException;
+import org.springframework.boot.configurationprocessor.json.JSONObject;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -21,7 +23,8 @@ import com.dpk.RabbitMQListener;
 import com.dpk.mapper.Mapper;
 import com.dpk.models.Claim;
 import com.google.gson.Gson;
-import org.json.*;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
 
 @Service
 public class SearchServiceImpl implements SearchService {
@@ -158,11 +161,24 @@ public class SearchServiceImpl implements SearchService {
 //		Claim claimDetails = new Claim();
 
 		Mapper byteToObj = new Mapper();
+		JsonParser parser = new JsonParser();
 
-		String dataToSend = byteToObj.byteToObject(message.getBody(), String.class);
-		
+//		String recievedData = byteToObj.byteToObject(message.getBody(), String.class);
+		String dataToSend = new String(message.getBody(),Charset.forName("UTF-8"));
+
+//			JSONObject jsonObject = new JSONObject(dataToSend);
+			String jsonRawString = parser.parse(dataToSend).getAsString();
+			try {
+				JSONObject jsonObject = new JSONObject(jsonRawString);
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+//			String jsonInString = new Gson().toJson(jsonRawString);
+			log.info("claimRequest is: "+ jsonRawString);
+
 		//Mapping data to claimDetails
-		sendToClaimDetails(dataToSend);
+//		sendToClaimDetails(dataToSend);
 
 		// Putting data to elasticsearch
 		String url = "http://localhost:9600/claim/details/1";
@@ -170,7 +186,7 @@ public class SearchServiceImpl implements SearchService {
 		httpHeaders.setContentType(MediaType.APPLICATION_JSON);
 		httpHeaders.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
 
-		HttpEntity<String> httpEntity = new HttpEntity<String>(dataToSend, httpHeaders);
+		HttpEntity<String> httpEntity = new HttpEntity<String>(jsonRawString, httpHeaders);
 		ResponseEntity<String> responseEntity = restTemplate.exchange(url, HttpMethod.PUT, httpEntity, String.class);
 
 		return dataToSend;
@@ -181,11 +197,15 @@ public class SearchServiceImpl implements SearchService {
 		log.info("sending data to ClaimDetails: " + message);
 		
 		//TODO: parse "message" to string to get key:value
-		String intermediateString = message;
-		JSONObject jsonObject = new JSONObject(intermediateString);
-		String testOut = jsonObject.getString("claimRequest");
-		log.info("claimRequest is: "+testOut);
-		
+//		String test = new String(message.getBody(),Charset.forName("UTF-8"));
+		JSONObject jsonObject;
+		try {
+			jsonObject = new JSONObject(message);
+			log.info("claimRequest is: "+ jsonObject);
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 //		Gson gson = new Gson();
 //		String jsonStringOutString = gson.fromJson(message, String.class);
 //		log.info("claimRequest is: "+ jsonStringOutString);
