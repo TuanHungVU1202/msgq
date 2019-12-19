@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import com.dpk.RabbitMQListener;
+import com.dpk.common.Utils;
 import com.dpk.mapper.Mapper;
 import com.dpk.models.Claim;
 import com.google.gson.Gson;
@@ -166,11 +167,18 @@ public class SearchServiceImpl implements SearchService {
 		String dataToSend = new String(message.getBody(), Charset.forName("UTF-8"));
 
 		String jsonRawString = parser.parse(dataToSend).getAsString();
-		JsonObject jsonObject = parser.parse(dataToSend).getAsJsonObject();
-		log.info("getting claimRequest: "+jsonObject.get("claimRequest").getAsString());
+//		JsonObject jsonObject = parser.parse(dataToSend).getAsJsonObject();
+//		log.info("getting claimRequest: "+jsonObject.get("claimRequest").getAsString());
 
 		// Mapping data to claimDetails
-		mapToClaimDetails(jsonRawString);
+		JSONObject json = Utils.parseToJsonObject(jsonRawString);
+		try {
+			JSONObject getClaim = json.getJSONObject("claimRequest");
+			log.info("get claim is: "+getClaim);
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 		// Putting data to elasticsearch
 		String url = "http://localhost:9600/claim/details/1";
@@ -184,23 +192,17 @@ public class SearchServiceImpl implements SearchService {
 		return null;
 	}
 
-	@Override
-	public void mapToClaimDetails(String jsonRawString) {
-		log.info("mapping data to ClaimDetails: " + jsonRawString);
-
-		JSONObject jsonObject;
-		try {
-			jsonObject = new JSONObject(jsonRawString);
-		} catch (JSONException e) {
-			e.printStackTrace();
-		}
-
-	}
-
+	
 	@Override
 	public void mapToClaimList(String jsonRawString) {
 		// TODO Auto-generated method stub
 
+	}
+
+	@Override
+	public void mapToClaimDetails(String message) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }
