@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 
 import com.dpk.config.ApplicationConfigReader;
-import com.dpk.services.MessageService;
+import com.dpk.services.SearchService;
 
 /**
  * Message Listener for RabbitMQ
@@ -26,9 +26,9 @@ public class RabbitMQListener {
 
 	@Autowired
 	ApplicationConfigReader applicationConfigReader;
-
+	
 	@Autowired
-	MessageService messageService;
+	SearchService searchService;
 
 	@RabbitListener(queues = "${app.queue.name}")
 	public void receiveMessage(Message message) {
@@ -36,7 +36,7 @@ public class RabbitMQListener {
 
 		try {
 			//Handling message
-			messageService.receiveMessage(message);
+			searchService.receiveMessage(message);
 
 			log.info("Making API call");
 			log.info("Process exiting after API call");

@@ -1,22 +1,32 @@
 package com.dpk.services;
 
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.Arrays;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.amqp.core.Message;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import com.dpk.RabbitMQListener;
+import com.dpk.mapper.Mapper;
 import com.dpk.models.Claim;
 import com.google.gson.Gson;
+import org.json.*;
 
 @Service
 public class SearchServiceImpl implements SearchService {
+	
+	private static final Logger log = LoggerFactory.getLogger(SearchServiceImpl.class);
 //	@Value("${elasticsearch.base.url}")
 //	private String elasticsearchBaseUrl;
 //
@@ -41,6 +51,8 @@ public class SearchServiceImpl implements SearchService {
 	String URL_SEARCH = "http://localhost:9600/claim/details/_search";
 
 	String idToCreate;
+
+	
 
 	@Override
 	public void getUserClaimDetails() {
@@ -137,4 +149,53 @@ public class SearchServiceImpl implements SearchService {
 		ResponseEntity<String> responseEntity = restTemplate.exchange(URL_SEARCH, HttpMethod.GET, httpEntity,
 				String.class);
 	}
+
+	@Override
+	public String receiveMessage(Message message) throws IOException {
+		
+		RestTemplate restTemplate = new RestTemplate();
+		restTemplate.getMessageConverters().add(0, new StringHttpMessageConverter(Charset.forName("UTF-8")));
+//		Claim claimDetails = new Claim();
+
+		Mapper byteToObj = new Mapper();
+
+		String dataToSend = byteToObj.byteToObject(message.getBody(), String.class);
+		
+		//Mapping data to claimDetails
+		sendToClaimDetails(dataToSend);
+
+		// Putting data to elasticsearch
+		String url = "http://localhost:9600/claim/details/1";
+		HttpHeaders httpHeaders = new HttpHeaders();
+		httpHeaders.setContentType(MediaType.APPLICATION_JSON);
+		httpHeaders.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+
+		HttpEntity<String> httpEntity = new HttpEntity<String>(dataToSend, httpHeaders);
+		ResponseEntity<String> responseEntity = restTemplate.exchange(url, HttpMethod.PUT, httpEntity, String.class);
+
+		return dataToSend;
+	}
+
+	@Override
+	public void sendToClaimDetails(String message) {
+		log.info("sending data to ClaimDetails: " + message);
+		
+		//TODO: parse "message" to string to get key:value
+		String intermediateString = message;
+		JSONObject jsonObject = new JSONObject(intermediateString);
+		String testOut = jsonObject.getString("claimRequest");
+		log.info("claimRequest is: "+testOut);
+		
+//		Gson gson = new Gson();
+//		String jsonStringOutString = gson.fromJson(message, String.class);
+//		log.info("claimRequest is: "+ jsonStringOutString);
+		
+	}
+
+	@Override
+	public void sendToClaimList(String message) {
+		// TODO Auto-generated method stub
+
+	}
+
 }

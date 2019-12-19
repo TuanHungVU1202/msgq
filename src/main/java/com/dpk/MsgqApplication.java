@@ -1,5 +1,9 @@
 package com.dpk;
 
+import java.io.IOException;
+
+import javax.annotation.PostConstruct;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.annotation.EnableRabbit;
@@ -7,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
+import org.springframework.http.HttpStatus;
 
 import com.dpk.services.SearchService;
 
@@ -16,7 +21,7 @@ public class MsgqApplication extends SpringBootServletInitializer {
 	private static final Logger log = LoggerFactory.getLogger(MsgqApplication.class);
 
 	@Autowired
-	SearchService claimService;
+	SearchService searchService;
 
 	public static void main(String[] args) {
 		SpringApplication.run(MsgqApplication.class, args);
@@ -26,11 +31,11 @@ public class MsgqApplication extends SpringBootServletInitializer {
 //	public void AppStartUp() throws IOException {
 //		log.info("Initializing Mapping for Elasticsearch");
 //		try {
-//			if (!HttpStatus.OK.equals(claimService.getMappingStatus())) {
-//				claimService.setMapping();
+//			if (!HttpStatus.OK.equals(searchService.getMappingStatus())) {
+//				searchService.setMapping();
 //			}
 //		} catch (Exception e) {
-//			claimService.setMapping();
+//			searchService.setMapping();
 //		}
 //	}
 //
