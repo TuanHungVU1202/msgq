@@ -1,6 +1,7 @@
 package com.dpk.models;
 
 public class ClaimDetails {
+	private String claimId;
 	private String policyholder;
 	private String policyNumber;
 	private String policyStartDate;
@@ -27,6 +28,14 @@ public class ClaimDetails {
 	private String hospitalDischargePaper;
 	private String hospitalbillrecipt;
 	private String prescription;
+
+	public String getClaimId() {
+		return claimId;
+	}
+
+	public void setClaimId(String claimId) {
+		this.claimId = claimId;
+	}
 
 	public String getPolicyholder() {
 		return policyholder;

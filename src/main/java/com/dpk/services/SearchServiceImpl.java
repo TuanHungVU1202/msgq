@@ -192,7 +192,10 @@ public class SearchServiceImpl implements SearchService {
 	public ClaimDetails mapToClaimDetails(JSONObject json) {
 		ClaimDetails claimDetails = new ClaimDetails();
 		try {
-			String getClaimDetails = json.getJSONObject("claim").getString("policyHolder");
+			String getClaimDetails = json.getJSONObject("claim").getString("claimId");
+			claimDetails.setClaimId(getClaimDetails);
+
+			getClaimDetails = json.getJSONObject("claim").getString("policyHolder");
 			claimDetails.setPolicyholder(getClaimDetails);
 
 			getClaimDetails = json.getJSONObject("claim").getString("policyNumber");
@@ -314,7 +317,7 @@ public class SearchServiceImpl implements SearchService {
 
 			getClaimList = json.getJSONObject("claim").getString("lastModified");
 			claimList.setLastModified(getClaimList);
-			
+
 			getClaimList = json.getJSONObject("claim").getString("status");
 			claimList.setStatus(getClaimList);
 		} catch (JSONException e) {
