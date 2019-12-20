@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.Message;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.configurationprocessor.json.JSONException;
 import org.springframework.boot.configurationprocessor.json.JSONObject;
 import org.springframework.http.HttpEntity;
@@ -34,31 +35,39 @@ public class SearchServiceImpl implements SearchService {
 	@Autowired
 	private RestTemplate restClient;
 
-//	@Value("${elasticsearch.base.url}")
-//	private String elasticsearchBaseUrl;
-//
-//	@Value("${elasticsearch.index.uri}")
-//	private String elasticsearchIndexUri;
-//
-//	@Value("${elasticsearch.type.uri}")
-//	private String elasticsearchTypeUri;
-//
-//	String URL_SET_MAPPING = "http://" + elasticsearchBaseUrl + "/" + elasticsearchIndexUri;
-//
-//	String URL_CHECK_STATUS = "http://" + elasticsearchBaseUrl + "/" + elasticsearchIndexUri + "/"
-//			+ elasticsearchTypeUri;
-//
-//	String URL_SEARCH = "http://" + elasticsearchBaseUrl + "/" + elasticsearchIndexUri + "/" + elasticsearchTypeUri
-//			+ "/_search";
+	@Value("${elasticsearch.base.url}")
+	private String elasticsearchBaseUrl;
 
-	String URL_SET_MAPPING = "http://localhost:9600/claim";
+	@Value("${elasticsearch.index.uri}")
+	private String elasticsearchIndexUri;
 
-	String URL_CHECK_STATUS = "http://localhost:9600/claim/details/_mapping";
+	@Value("${elasticsearch.type.uri.details}")
+	private String elasticsearchTypeDetails;
+	
+	@Value("${elasticsearch.type.uri.list}")
+	private String elasticsearchTypeList;
+	
+	private String URL_CHECK_STATUS_LIST = "";
 
-	String URL_SEARCH = "http://localhost:9600/claim/details/_search";
+	String URL_SET_MAPPING = "http://" + elasticsearchBaseUrl + "/" + elasticsearchIndexUri;
+
+	String URL_SEARCH_LIST = "http://" + elasticsearchBaseUrl + "/" + elasticsearchIndexUri + "/" + elasticsearchTypeList
+			+ "/_search";
+	String URL_SEARCH_DETAILS = "http://" + elasticsearchBaseUrl + "/" + elasticsearchIndexUri + "/" + elasticsearchTypeDetails
+			+ "/_search";
+
+//	String URL_SET_MAPPING = "http://localhost:9600/claim";
+
+//	String URL_SEARCH = "http://localhost:9600/claim/details/_search";
 
 	String idToCreate;
 
+	public SearchServiceImpl() {
+		// TODO Auto-generated constructor stub
+		URL_CHECK_STATUS_LIST = "http://" + elasticsearchBaseUrl + "/" + elasticsearchIndexUri + "/"
+				+ elasticsearchTypeList;
+	}
+	
 	@Override
 	public void getUserClaimDetails() {
 //		String url = "http://192.168.19.30:9600/claim/details/1";
@@ -108,57 +117,76 @@ public class SearchServiceImpl implements SearchService {
 		httpHeaders.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
 
 		HttpEntity<String> httpEntity = new HttpEntity<String>(httpHeaders);
-		ResponseEntity<String> responseEntity = restClient.exchange(URL_CHECK_STATUS, HttpMethod.GET, httpEntity,
+		ResponseEntity<String> responseEntity = restClient.exchange(URL_CHECK_STATUS_LIST, HttpMethod.GET, httpEntity,
 				String.class);
 
 		return responseEntity.getStatusCode();
 	}
 
 	// Create claim by claim object receiving from Rabbitmq
-	@Override
-	public String createClaim(Claim claimBody, String id) {
-		this.idToCreate = id;
-		String URL_CREATE = String.format("http://localhost:9600/claim/details/%s", idToCreate);
+//	@Override
+//	public String createClaim(Claim claimBody, String id) {
+//		this.idToCreate = id;
+//		String URL_CREATE = String.format("http://localhost:9600/claim/details/%s", idToCreate);
+//
+////		RestTemplate restTemplate = new RestTemplate();
+//
+//		HttpHeaders httpHeaders = new HttpHeaders();
+//		httpHeaders.setContentType(MediaType.APPLICATION_JSON);
+//		httpHeaders.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+//
+//		String jsonInString = new Gson().toJson(claimBody);
+//		HttpEntity<String> httpEntity = new HttpEntity<String>(jsonInString, httpHeaders);
+//		ResponseEntity<String> responseEntity = restClient.exchange(URL_CREATE, HttpMethod.PUT, httpEntity,
+//				String.class);
+//
+//		return jsonInString;
+//	}
 
-//		RestTemplate restTemplate = new RestTemplate();
-
-		HttpHeaders httpHeaders = new HttpHeaders();
-		httpHeaders.setContentType(MediaType.APPLICATION_JSON);
-		httpHeaders.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
-
-		String jsonInString = new Gson().toJson(claimBody);
-		HttpEntity<String> httpEntity = new HttpEntity<String>(jsonInString, httpHeaders);
-		ResponseEntity<String> responseEntity = restClient.exchange(URL_CREATE, HttpMethod.PUT, httpEntity,
-				String.class);
-
-		return jsonInString;
-	}
-
-	@Override
-	public void getAll() {
-//		RestTemplate restTemplate = new RestTemplate();
-
-		HttpHeaders httpHeaders = new HttpHeaders();
-		httpHeaders.setContentType(MediaType.APPLICATION_JSON);
-		httpHeaders.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
-
-		HttpEntity<String> httpEntity = new HttpEntity<String>(httpHeaders);
-
-		ResponseEntity<String> responseEntity = restClient.exchange(URL_SEARCH, HttpMethod.GET, httpEntity,
-				String.class);
-	}
+//	@Override
+//	public void getAll() {
+////		RestTemplate restTemplate = new RestTemplate();
+//
+//		HttpHeaders httpHeaders = new HttpHeaders();
+//		httpHeaders.setContentType(MediaType.APPLICATION_JSON);
+//		httpHeaders.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+//
+//		HttpEntity<String> httpEntity = new HttpEntity<String>(httpHeaders);
+//
+//		ResponseEntity<String> responseEntity = restClient.exchange(URL_SEARCH, HttpMethod.GET, httpEntity,
+//				String.class);
+//	}
 
 	@Override
 	public ClaimList searchClaimList(String dataSearch) {
 		ClaimList claimList = new ClaimList();
-		String URL_CLAIM_LIST_SEARCH = String.format("http://localhost:9600/claim/list/_search/%s", dataSearch);
+		
+		String bodyString = "{\r\n" + 
+				"    \"query\": {\r\n" + 
+				"        \"bool\": {\r\n" + 
+				"            \"should\": [\r\n" + 
+				"                {\r\n" + 
+				"                    \"match\": {\r\n" + 
+				"                        \"claimId\": \"%s\"\r\n" + 
+				"                    }\r\n" + 
+				"                },\r\n" + 
+				"                {\r\n" + 
+				"                    \"match\": {\r\n" + 
+				"                        \"proposerName\": \"%s\"\r\n" + 
+				"                    }\r\n" + 
+				"                }\r\n" + 
+				"            ]\r\n" + 
+				"        }\r\n" + 
+				"    }\r\n" + 
+				"}";
+		String parsedData = String.format(bodyString, dataSearch, dataSearch);
 
 		HttpHeaders httpHeaders = new HttpHeaders();
 		httpHeaders.setContentType(MediaType.APPLICATION_JSON);
 		httpHeaders.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
 
-		HttpEntity<String> httpEntity = new HttpEntity<String>(dataSearch, httpHeaders);
-		ResponseEntity<String> responseEntity = restClient.exchange(URL_CLAIM_LIST_SEARCH, HttpMethod.GET, httpEntity,
+		HttpEntity<String> httpEntity = new HttpEntity<String>(parsedData, httpHeaders);
+		ResponseEntity<String> responseEntity = restClient.exchange(URL_SEARCH_LIST, HttpMethod.GET, httpEntity,
 				String.class);
 
 		return claimList;

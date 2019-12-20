@@ -19,9 +19,9 @@ public interface SearchService {
 
 	public HttpStatus getMappingStatus();
 
-	public String createClaim(Claim claimBody, String id);
+//	public String createClaim(Claim claimBody, String id);
 
-	public void getAll();
+//	public void getAll();
 
 	public ClaimList searchClaimList(String dataSearch);
 
