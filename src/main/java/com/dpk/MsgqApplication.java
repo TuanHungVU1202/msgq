@@ -27,17 +27,17 @@ public class MsgqApplication extends SpringBootServletInitializer {
 		SpringApplication.run(MsgqApplication.class, args);
 	}
 
-//	@PostConstruct
-//	public void AppStartUp() throws IOException {
-//		log.info("Initializing Mapping for Elasticsearch");
-//		try {
-//			if (!HttpStatus.OK.equals(searchService.getMappingStatus())) {
-//				searchService.setMapping();
-//			}
-//		} catch (Exception e) {
-//			searchService.setMapping();
-//		}
-//	}
+	@PostConstruct
+	public void AppStartUp() throws IOException {
+		log.info("Initializing Mapping for Elasticsearch");
+		try {
+			if (!HttpStatus.OK.equals(searchService.getMappingStatus())) {
+				searchService.setMapping();
+			}
+		} catch (Exception e) {
+			searchService.setMapping();
+		}
+	}
 //
 //	@Autowired
 //	private ApplicationConfigReader applicationConfig;

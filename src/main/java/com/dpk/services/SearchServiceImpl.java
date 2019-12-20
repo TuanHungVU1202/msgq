@@ -74,22 +74,20 @@ public class SearchServiceImpl implements SearchService {
 
 	@Override
 	public void setMapping() throws IOException {
-		String mapping = "{\r\n" + "    \"mappings\": {\r\n" + "        \"details\": {\r\n"
-				+ "            \"properties\": {\r\n" + "                \"policyNumber\": {\r\n"
-				+ "                    \"type\": \"keyword\"\r\n" + "                },\r\n"
-				+ "                \"policyHolder\": {\r\n" + "                    \"type\": \"keyword\"\r\n"
-				+ "                },\r\n" + "                \"insuredObject\": {\r\n"
-				+ "                    \"type\": \"nested\"\r\n" + "                },\r\n"
-				+ "                \"startDate\": {\r\n" + "                    \"type\": \"date\"\r\n"
-				+ "                },\r\n" + "                \"endDate\": {\r\n"
-				+ "                    \"type\": \"date\"\r\n" + "                },\r\n"
-				+ "                \"productType\": {\r\n" + "                    \"type\": \"text\"\r\n"
-				+ "                },\r\n" + "                \"sumInsured\": {\r\n"
-				+ "                    \"type\": \"text\"\r\n" + "                },\r\n"
-				+ "                \"premium\": {\r\n" + "                    \"type\": \"text\"\r\n"
-				+ "                },\r\n" + "                \"paymentDate\": {\r\n"
-				+ "                    \"type\": \"date\"\r\n" + "                }\r\n" + "            }\r\n"
-				+ "        }\r\n" + "    }\r\n" + "}";
+		String mappingClaimList = "{\r\n" + 
+				"    \"mappings\": {\r\n" + 
+				"        \"list\": {\r\n" + 
+				"            \"properties\": {\r\n" + 
+				"                \"claimId\": {\r\n" + 
+				"                    \"type\": \"text\"\r\n" + 
+				"                },\r\n" + 
+				"                \"proposerName\": {\r\n" + 
+				"                    \"type\": \"text\"\r\n" + 
+				"                }\r\n" + 
+				"            }\r\n" + 
+				"        }\r\n" + 
+				"    }\r\n" + 
+				"}";
 
 		RestTemplate restTemplate = new RestTemplate();
 
@@ -97,9 +95,16 @@ public class SearchServiceImpl implements SearchService {
 		headers.setContentType(MediaType.APPLICATION_JSON);
 		headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
 
-		HttpEntity<String> httpEntity = new HttpEntity<String>(mapping, headers);
-		ResponseEntity<String> responseEntity = restTemplate.exchange(URL_SET_MAPPING, HttpMethod.PUT, httpEntity,
-				String.class);
+		try {
+			HttpEntity<String> httpEntity = new HttpEntity<String>(mappingClaimList, headers);
+			ResponseEntity<String> responseEntity = restTemplate.exchange(URL_SET_MAPPING, HttpMethod.PUT, httpEntity,
+					String.class);
+		} catch (Exception e) {
+			// TODO: handle exception
+			log.error(e.toString());
+		}
+
+
 	}
 
 	@Override
