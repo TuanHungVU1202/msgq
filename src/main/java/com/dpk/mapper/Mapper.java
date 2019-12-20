@@ -58,9 +58,8 @@ public class Mapper {
 //			if (element != null) {
 //				resClaimExt.setPolicyHolder(element.getAsString());
 //			}
-//			//}
-//			//com.google.gson.JsonObject customerObject = convertedObject.getAsJsonObject(CUSTOMER);
-//			// 
+//		}
+////			com.google.gson.JsonObject customerObject = convertedObject.getAsJsonObject(CUSTOMER);
 //		} catch (Exception e) {
 //			//e.printStackTrace();
 //			logger.error(e.getMessage());
@@ -71,8 +70,7 @@ public class Mapper {
 
 	private static JsonElement getJsonElement(com.google.gson.JsonObject convertedObject, String parent, String child) {
 		com.google.gson.JsonObject metaDataObject = convertedObject.getAsJsonObject(parent);
-		// com.google.gson.JsonObject metaDataObject =
-		// convertedObject.getAsJsonObject(META_DATA);
+//		com.google.gson.JsonObject metaDataObject = convertedObject.getAsJsonObject(META_DATA);
 		if (null != metaDataObject) {
 			return metaDataObject.get(child);
 		} else {

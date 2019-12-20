@@ -42,16 +42,14 @@ public class MsgqApplication extends SpringBootServletInitializer {
 			searchService.setMapping();
 		}
 	}
-	
-	
+
 	@Bean(name = "restClient")
 	public RestTemplate getRestClient() {
 		RestTemplate restClient = new RestTemplate();
-		restClient.getMessageConverters()
-        .add(0, new StringHttpMessageConverter(Charset.forName("UTF-8")));
+		restClient.getMessageConverters().add(0, new StringHttpMessageConverter(Charset.forName("UTF-8")));
 		return restClient;
 	}
-//
+
 //	@Autowired
 //	private ApplicationConfigReader applicationConfig;
 //	

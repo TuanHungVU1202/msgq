@@ -37,4 +37,9 @@ public class SearchController {
 		String claimJson = claimService.createClaim(claimRequest, id);
 		return new ResponseEntity<String>(claimJson, HttpStatus.CREATED);
 	}
+	
+	@PostMapping(value = "/search", headers = "Accept=application/json")
+	public ResponseEntity<String> searchClaimList(@RequestBody String dataSearch) {
+		return new ResponseEntity<String>(HttpStatus.FOUND);
+	}
 }

@@ -16,7 +16,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -31,10 +30,10 @@ import com.google.gson.JsonParser;
 @Service
 public class SearchServiceImpl implements SearchService {
 	private static final Logger log = LoggerFactory.getLogger(SearchServiceImpl.class);
-	
+
 	@Autowired
 	private RestTemplate restClient;
-	
+
 //	@Value("${elasticsearch.base.url}")
 //	private String elasticsearchBaseUrl;
 //
@@ -79,48 +78,36 @@ public class SearchServiceImpl implements SearchService {
 
 	@Override
 	public void setMapping() throws IOException {
-		String mappingClaimList = "{\r\n" + 
-				"    \"mappings\": {\r\n" + 
-				"        \"list\": {\r\n" + 
-				"            \"properties\": {\r\n" + 
-				"                \"claimId\": {\r\n" + 
-				"                    \"type\": \"text\"\r\n" + 
-				"                },\r\n" + 
-				"                \"proposerName\": {\r\n" + 
-				"                    \"type\": \"text\"\r\n" + 
-				"                }\r\n" + 
-				"            }\r\n" + 
-				"        }\r\n" + 
-				"    }\r\n" + 
-				"}";
+		String mappingClaimList = "{\r\n" + "    \"mappings\": {\r\n" + "        \"list\": {\r\n"
+				+ "            \"properties\": {\r\n" + "                \"claimId\": {\r\n"
+				+ "                    \"type\": \"text\"\r\n" + "                },\r\n"
+				+ "                \"proposerName\": {\r\n" + "                    \"type\": \"text\"\r\n"
+				+ "                }\r\n" + "            }\r\n" + "        }\r\n" + "    }\r\n" + "}";
 
 //		RestTemplate restTemplate = new RestTemplate();
 
-		HttpHeaders headers = new HttpHeaders();
-		headers.setContentType(MediaType.APPLICATION_JSON);
-		headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+		HttpHeaders httpHeaders = new HttpHeaders();
+		httpHeaders.setContentType(MediaType.APPLICATION_JSON);
+		httpHeaders.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
 
 		try {
-			HttpEntity<String> httpEntity = new HttpEntity<String>(mappingClaimList, headers);
+			HttpEntity<String> httpEntity = new HttpEntity<String>(mappingClaimList, httpHeaders);
 			ResponseEntity<String> responseEntity = restClient.exchange(URL_SET_MAPPING, HttpMethod.PUT, httpEntity,
 					String.class);
 		} catch (Exception e) {
-			// TODO: handle exception
 			log.error(e.toString());
 		}
-
-
 	}
 
 	@Override
 	public HttpStatus getMappingStatus() {
 //		RestTemplate restTemplate = new RestTemplate();
 
-		HttpHeaders headers = new HttpHeaders();
-		headers.setContentType(MediaType.APPLICATION_JSON);
-		headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+		HttpHeaders httpHeaders = new HttpHeaders();
+		httpHeaders.setContentType(MediaType.APPLICATION_JSON);
+		httpHeaders.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
 
-		HttpEntity<String> httpEntity = new HttpEntity<String>(headers);
+		HttpEntity<String> httpEntity = new HttpEntity<String>(httpHeaders);
 		ResponseEntity<String> responseEntity = restClient.exchange(URL_CHECK_STATUS, HttpMethod.GET, httpEntity,
 				String.class);
 
@@ -135,12 +122,12 @@ public class SearchServiceImpl implements SearchService {
 
 //		RestTemplate restTemplate = new RestTemplate();
 
-		HttpHeaders headers = new HttpHeaders();
-		headers.setContentType(MediaType.APPLICATION_JSON);
-		headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+		HttpHeaders httpHeaders = new HttpHeaders();
+		httpHeaders.setContentType(MediaType.APPLICATION_JSON);
+		httpHeaders.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
 
 		String jsonInString = new Gson().toJson(claimBody);
-		HttpEntity<String> httpEntity = new HttpEntity<String>(jsonInString, headers);
+		HttpEntity<String> httpEntity = new HttpEntity<String>(jsonInString, httpHeaders);
 		ResponseEntity<String> responseEntity = restClient.exchange(URL_CREATE, HttpMethod.PUT, httpEntity,
 				String.class);
 
@@ -162,6 +149,12 @@ public class SearchServiceImpl implements SearchService {
 	}
 
 	@Override
+	public ClaimList searchClaimList(String dataSearch) {
+		ClaimList claimList = new ClaimList();
+		return claimList;
+	}
+
+	@Override
 	public String receiveMessage(Message message) throws IOException {
 //		RestTemplate restTemplate = new RestTemplate();
 //		restTemplate.getMessageConverters().add(0, new StringHttpMessageConverter(Charset.forName("UTF-8")));
@@ -174,9 +167,8 @@ public class SearchServiceImpl implements SearchService {
 		String jsonRawString = parser.parse(dataToSend).getAsString();
 		JSONObject json = Utils.parseToJsonObject(jsonRawString);
 
-		// TODO: Mapping data to claimDetails
 		ClaimDetails returnClaimDetails = mapToClaimDetails(json);
-		// TODO: Mapping data to Claim list
+
 		ClaimList returnClaimList = mapToClaimList(json);
 
 		// Putting data to elasticsearch
@@ -190,12 +182,12 @@ public class SearchServiceImpl implements SearchService {
 		HttpEntity<ClaimList> claimListEntity = new HttpEntity<ClaimList>(returnClaimList, httpHeaders);
 		HttpEntity<ClaimDetails> claimDetailsEntity = new HttpEntity<ClaimDetails>(returnClaimDetails, httpHeaders);
 
-		ResponseEntity<String> responseClaimList = restClient.exchange(URL_CLAIM_LIST, HttpMethod.PUT,
-				claimListEntity, String.class);
+		ResponseEntity<String> responseClaimList = restClient.exchange(URL_CLAIM_LIST, HttpMethod.PUT, claimListEntity,
+				String.class);
 		ResponseEntity<String> responseClaimDetails = restClient.exchange(URL_CLAIM_DETAILS, HttpMethod.PUT,
 				claimDetailsEntity, String.class);
 
-		return null;
+		return jsonRawString;
 	}
 
 	@Override
