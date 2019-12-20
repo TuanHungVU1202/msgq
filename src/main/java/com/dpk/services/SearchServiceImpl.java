@@ -22,10 +22,8 @@ import org.springframework.web.client.RestTemplate;
 
 import com.dpk.common.Utils;
 import com.dpk.mapper.Mapper;
-import com.dpk.models.Claim;
 import com.dpk.models.ClaimDetails;
 import com.dpk.models.ClaimList;
-import com.google.gson.Gson;
 import com.google.gson.JsonParser;
 
 @Service
@@ -46,25 +44,25 @@ public class SearchServiceImpl implements SearchService {
 //	
 //	@Value("${elasticsearch.type.uri.list}")
 //	private String elasticsearchTypeList;
-	
+
 	@Value("${elasticsearch.check.mapping}")
 	private String urlCheckMapping;
-	
+
 	@Value("${elasticsearch.set.mapping}")
 	private String urlSetMapping;
-	
+
 	@Value("${elasticsearch.search.list}")
 	private String urlSearchList;
-	
+
 	@Value("${elasticsearch.search.details}")
 	private String urlSearchDetails;
-	
+
 	@Value("${elasticsearch.claim.details}")
 	private String urlClaimDetails;
-	
+
 	@Value("${elasticsearch.claim.list}")
 	private String urlClaimList;
-	
+
 //	private String URL_CHECK_STATUS_LIST = "";
 
 //	String URL_SET_MAPPING = "http://" + elasticsearchBaseUrl + "/" + elasticsearchIndexUri;
@@ -85,7 +83,7 @@ public class SearchServiceImpl implements SearchService {
 //		URL_CHECK_STATUS_LIST = "http://" + elasticsearchBaseUrl + "/" + elasticsearchIndexUri + "/"
 //				+ elasticsearchTypeList;
 //	}
-	
+
 	@Override
 	public void getUserClaimDetails() {
 //		String url = "http://192.168.19.30:9600/claim/details/1";
@@ -178,25 +176,13 @@ public class SearchServiceImpl implements SearchService {
 	@Override
 	public String searchClaimList(String dataSearch) {
 //		ClaimList claimList = new ClaimList();
-		
-		String bodyString = "{\r\n" + 
-				"    \"query\": {\r\n" + 
-				"        \"bool\": {\r\n" + 
-				"            \"should\": [\r\n" + 
-				"                {\r\n" + 
-				"                    \"match\": {\r\n" + 
-				"                        \"claimId\": \"%s\"\r\n" + 
-				"                    }\r\n" + 
-				"                },\r\n" + 
-				"                {\r\n" + 
-				"                    \"match\": {\r\n" + 
-				"                        \"proposerName\": \"%s\"\r\n" + 
-				"                    }\r\n" + 
-				"                }\r\n" + 
-				"            ]\r\n" + 
-				"        }\r\n" + 
-				"    }\r\n" + 
-				"}";
+
+		String bodyString = "{\r\n" + "    \"query\": {\r\n" + "        \"bool\": {\r\n"
+				+ "            \"should\": [\r\n" + "                {\r\n" + "                    \"match\": {\r\n"
+				+ "                        \"claimId\": \"%s\"\r\n" + "                    }\r\n"
+				+ "                },\r\n" + "                {\r\n" + "                    \"match\": {\r\n"
+				+ "                        \"proposerName\": \"%s\"\r\n" + "                    }\r\n"
+				+ "                }\r\n" + "            ]\r\n" + "        }\r\n" + "    }\r\n" + "}";
 		String parsedData = String.format(bodyString, dataSearch, dataSearch);
 
 		HttpHeaders httpHeaders = new HttpHeaders();
@@ -225,24 +211,43 @@ public class SearchServiceImpl implements SearchService {
 		JSONObject json = Utils.parseToJsonObject(jsonRawString);
 
 		ClaimDetails returnClaimDetails = mapToClaimDetails(json);
-
 		ClaimList returnClaimList = mapToClaimList(json);
 
 		// Putting data to elasticsearch
 //		String URL_CLAIM_DETAILS = "http://localhost:9600/claim/details/1";
 //		String URL_CLAIM_LIST = "http://localhost:9600/claim/list/1";
 
-		HttpHeaders httpHeaders = new HttpHeaders();
-		httpHeaders.setContentType(MediaType.APPLICATION_JSON);
-		httpHeaders.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+		try {
+			Long getClaim = json.getJSONObject("claim").getLong("id");
+			String URL_CLAIM_DETAILS = String.format(urlClaimDetails + "/%d", getClaim);
+			String URL_CLAIM_LIST = String.format(urlClaimList + "/%d", getClaim);
 
-		HttpEntity<ClaimList> claimListEntity = new HttpEntity<ClaimList>(returnClaimList, httpHeaders);
-		HttpEntity<ClaimDetails> claimDetailsEntity = new HttpEntity<ClaimDetails>(returnClaimDetails, httpHeaders);
+			HttpHeaders httpHeaders = new HttpHeaders();
+			httpHeaders.setContentType(MediaType.APPLICATION_JSON);
+			httpHeaders.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
 
-		ResponseEntity<String> responseClaimList = restClient.exchange(urlClaimList + "/1", HttpMethod.PUT, claimListEntity,
-				String.class);
-		ResponseEntity<String> responseClaimDetails = restClient.exchange(urlClaimDetails + "/1", HttpMethod.PUT,
-				claimDetailsEntity, String.class);
+			HttpEntity<ClaimList> claimListEntity = new HttpEntity<ClaimList>(returnClaimList, httpHeaders);
+			HttpEntity<ClaimDetails> claimDetailsEntity = new HttpEntity<ClaimDetails>(returnClaimDetails, httpHeaders);
+
+			ResponseEntity<String> responseClaimDetails = restClient.exchange(URL_CLAIM_DETAILS, HttpMethod.PUT,
+					claimDetailsEntity, String.class);
+			ResponseEntity<String> responseClaimList = restClient.exchange(URL_CLAIM_LIST, HttpMethod.PUT,
+					claimListEntity, String.class);
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+
+//		HttpHeaders httpHeaders = new HttpHeaders();
+//		httpHeaders.setContentType(MediaType.APPLICATION_JSON);
+//		httpHeaders.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+//
+//		HttpEntity<ClaimList> claimListEntity = new HttpEntity<ClaimList>(returnClaimList, httpHeaders);
+//		HttpEntity<ClaimDetails> claimDetailsEntity = new HttpEntity<ClaimDetails>(returnClaimDetails, httpHeaders);
+
+//		ResponseEntity<String> responseClaimList = restClient.exchange(urlClaimList + "/1", HttpMethod.PUT, claimListEntity,
+//				String.class);
+//		ResponseEntity<String> responseClaimDetails = restClient.exchange(urlClaimDetails + "/1", HttpMethod.PUT,
+//				claimDetailsEntity, String.class);
 
 		return jsonRawString;
 	}
