@@ -24,6 +24,8 @@ public interface SearchService {
 //	public void getAll();
 
 	public String searchClaimList(String dataSearch);
+	
+	public String sortDate(String order);
 
 	// Mapping data from RabbitMQ to models
 

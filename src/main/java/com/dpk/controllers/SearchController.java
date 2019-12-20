@@ -41,12 +41,36 @@ public class SearchController {
 //		return new ResponseEntity<String>(claimJson, HttpStatus.CREATED);
 //	}
 
+	/*
+	 * Passed argument: 
+	 * {
+	 * 	"search": ""
+	 * }
+	 */
 	@PostMapping(value = "/search", headers = "Accept=application/json")
 	public ResponseEntity<String> searchClaimList(@RequestBody String dataSearch) {
 		String returnList="";
 		try {
 			JSONObject json = Utils.parseToJsonObject(dataSearch);
 			returnList = searchService.searchClaimList(json.get("search").toString());
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		return new ResponseEntity<String>(returnList, HttpStatus.FOUND);
+	}
+	
+	/*
+	 * Passed argument: 
+	 * {
+	 * 	"order": "asc" (or desc)
+	 * }
+	 */
+	@PostMapping(value = "/sort-date", headers = "Accept=application/json")
+	public ResponseEntity<String> sortDate(@RequestBody String order) {
+		String returnList="";
+		try {
+			JSONObject json = Utils.parseToJsonObject(order);
+			returnList = searchService.sortDate(json.get("order").toString());
 		} catch (Exception e) {
 			// TODO: handle exception
 		}

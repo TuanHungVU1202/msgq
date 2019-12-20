@@ -115,6 +115,12 @@ public class SearchServiceImpl implements SearchService {
 				"                },\r\n" + 
 				"                \"proposerName\": {\r\n" + 
 				"                    \"type\": \"keyword\"\r\n" + 
+				"                },\r\n" + 
+				"                \"createdDate\": {\r\n" + 
+				"                    \"type\": \"date\"\r\n" + 
+				"                },\r\n" + 
+				"                \"lastModified\": {\r\n" + 
+				"                    \"type\": \"date\"\r\n" + 
 				"                }\r\n" + 
 				"            }\r\n" + 
 				"        }\r\n" + 
@@ -219,6 +225,44 @@ public class SearchServiceImpl implements SearchService {
 		ResponseEntity<String> responseEntity = restClient.exchange(urlSearchList, HttpMethod.POST, httpEntity,
 				String.class);
 	
+		String returnString = responseEntity.getBody();
+
+		return returnString;
+	}
+	
+	/*
+	 * Passed argument: 
+	 * {
+	 * 	"order": "asc" (or desc)
+	 * }
+	 */
+	@Override
+	public String sortDate(String order) {
+		String orderString = "{\r\n" + 
+				"  \"query\": {\r\n" + 
+				"    \"match_all\": {}\r\n" + 
+				"  },\r\n" + 
+				"  \"sort\": [\r\n" + 
+				"    {\r\n" + 
+				"      \"createdDate\": {\r\n" + 
+				"        \"order\": \"%s\"\r\n" + 
+				"      }\r\n" + 
+				"    }\r\n" + 
+				"  ]\r\n" + 
+				"}";
+		
+		
+		String parsedData = String.format(orderString, order);
+		JSONObject json = Utils.parseToJsonObject(parsedData);
+		
+		HttpHeaders httpHeaders = new HttpHeaders();
+		httpHeaders.setContentType(MediaType.APPLICATION_JSON);
+		httpHeaders.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+
+		HttpEntity<String> httpEntity = new HttpEntity<String>(json.toString(), httpHeaders);
+		ResponseEntity<String> responseEntity = restClient.exchange(urlSearchList, HttpMethod.POST, httpEntity,
+				String.class);
+		
 		String returnString = responseEntity.getBody();
 
 		return returnString;
