@@ -151,6 +151,16 @@ public class SearchServiceImpl implements SearchService {
 	@Override
 	public ClaimList searchClaimList(String dataSearch) {
 		ClaimList claimList = new ClaimList();
+		String URL_CLAIM_LIST_SEARCH = String.format("http://localhost:9600/claim/list/_search/%s", dataSearch);
+
+		HttpHeaders httpHeaders = new HttpHeaders();
+		httpHeaders.setContentType(MediaType.APPLICATION_JSON);
+		httpHeaders.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+
+		HttpEntity<String> httpEntity = new HttpEntity<String>(dataSearch, httpHeaders);
+		ResponseEntity<String> responseEntity = restClient.exchange(URL_CLAIM_LIST_SEARCH, HttpMethod.GET, httpEntity,
+				String.class);
+
 		return claimList;
 	}
 
