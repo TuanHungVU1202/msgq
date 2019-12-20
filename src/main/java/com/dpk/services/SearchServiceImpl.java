@@ -7,6 +7,7 @@ import java.util.Arrays;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.Message;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.configurationprocessor.json.JSONException;
 import org.springframework.boot.configurationprocessor.json.JSONObject;
 import org.springframework.http.HttpEntity;
@@ -30,6 +31,10 @@ import com.google.gson.JsonParser;
 @Service
 public class SearchServiceImpl implements SearchService {
 	private static final Logger log = LoggerFactory.getLogger(SearchServiceImpl.class);
+	
+	@Autowired
+	private RestTemplate restClient;
+	
 //	@Value("${elasticsearch.base.url}")
 //	private String elasticsearchBaseUrl;
 //
@@ -89,7 +94,7 @@ public class SearchServiceImpl implements SearchService {
 				"    }\r\n" + 
 				"}";
 
-		RestTemplate restTemplate = new RestTemplate();
+//		RestTemplate restTemplate = new RestTemplate();
 
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_JSON);
@@ -97,7 +102,7 @@ public class SearchServiceImpl implements SearchService {
 
 		try {
 			HttpEntity<String> httpEntity = new HttpEntity<String>(mappingClaimList, headers);
-			ResponseEntity<String> responseEntity = restTemplate.exchange(URL_SET_MAPPING, HttpMethod.PUT, httpEntity,
+			ResponseEntity<String> responseEntity = restClient.exchange(URL_SET_MAPPING, HttpMethod.PUT, httpEntity,
 					String.class);
 		} catch (Exception e) {
 			// TODO: handle exception
@@ -109,14 +114,14 @@ public class SearchServiceImpl implements SearchService {
 
 	@Override
 	public HttpStatus getMappingStatus() {
-		RestTemplate restTemplate = new RestTemplate();
+//		RestTemplate restTemplate = new RestTemplate();
 
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_JSON);
 		headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
 
 		HttpEntity<String> httpEntity = new HttpEntity<String>(headers);
-		ResponseEntity<String> responseEntity = restTemplate.exchange(URL_CHECK_STATUS, HttpMethod.GET, httpEntity,
+		ResponseEntity<String> responseEntity = restClient.exchange(URL_CHECK_STATUS, HttpMethod.GET, httpEntity,
 				String.class);
 
 		return responseEntity.getStatusCode();
@@ -128,7 +133,7 @@ public class SearchServiceImpl implements SearchService {
 		this.idToCreate = id;
 		String URL_CREATE = String.format("http://localhost:9600/claim/details/%s", idToCreate);
 
-		RestTemplate restTemplate = new RestTemplate();
+//		RestTemplate restTemplate = new RestTemplate();
 
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_JSON);
@@ -136,7 +141,7 @@ public class SearchServiceImpl implements SearchService {
 
 		String jsonInString = new Gson().toJson(claimBody);
 		HttpEntity<String> httpEntity = new HttpEntity<String>(jsonInString, headers);
-		ResponseEntity<String> responseEntity = restTemplate.exchange(URL_CREATE, HttpMethod.PUT, httpEntity,
+		ResponseEntity<String> responseEntity = restClient.exchange(URL_CREATE, HttpMethod.PUT, httpEntity,
 				String.class);
 
 		return jsonInString;
@@ -144,7 +149,7 @@ public class SearchServiceImpl implements SearchService {
 
 	@Override
 	public void getAll() {
-		RestTemplate restTemplate = new RestTemplate();
+//		RestTemplate restTemplate = new RestTemplate();
 
 		HttpHeaders httpHeaders = new HttpHeaders();
 		httpHeaders.setContentType(MediaType.APPLICATION_JSON);
@@ -152,14 +157,14 @@ public class SearchServiceImpl implements SearchService {
 
 		HttpEntity<String> httpEntity = new HttpEntity<String>(httpHeaders);
 
-		ResponseEntity<String> responseEntity = restTemplate.exchange(URL_SEARCH, HttpMethod.GET, httpEntity,
+		ResponseEntity<String> responseEntity = restClient.exchange(URL_SEARCH, HttpMethod.GET, httpEntity,
 				String.class);
 	}
 
 	@Override
 	public String receiveMessage(Message message) throws IOException {
-		RestTemplate restTemplate = new RestTemplate();
-		restTemplate.getMessageConverters().add(0, new StringHttpMessageConverter(Charset.forName("UTF-8")));
+//		RestTemplate restTemplate = new RestTemplate();
+//		restTemplate.getMessageConverters().add(0, new StringHttpMessageConverter(Charset.forName("UTF-8")));
 //		Claim claimDetails = new Claim();
 
 		Mapper byteToObj = new Mapper();
@@ -185,9 +190,9 @@ public class SearchServiceImpl implements SearchService {
 		HttpEntity<ClaimList> claimListEntity = new HttpEntity<ClaimList>(returnClaimList, httpHeaders);
 		HttpEntity<ClaimDetails> claimDetailsEntity = new HttpEntity<ClaimDetails>(returnClaimDetails, httpHeaders);
 
-		ResponseEntity<String> responseClaimList = restTemplate.exchange(URL_CLAIM_LIST, HttpMethod.PUT,
+		ResponseEntity<String> responseClaimList = restClient.exchange(URL_CLAIM_LIST, HttpMethod.PUT,
 				claimListEntity, String.class);
-		ResponseEntity<String> responseClaimDetails = restTemplate.exchange(URL_CLAIM_DETAILS, HttpMethod.PUT,
+		ResponseEntity<String> responseClaimDetails = restClient.exchange(URL_CLAIM_DETAILS, HttpMethod.PUT,
 				claimDetailsEntity, String.class);
 
 		return null;

@@ -1,6 +1,7 @@
 package com.dpk;
 
 import java.io.IOException;
+import java.nio.charset.Charset;
 
 import javax.annotation.PostConstruct;
 
@@ -11,7 +12,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
+import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.converter.StringHttpMessageConverter;
+import org.springframework.web.client.RestTemplate;
 
 import com.dpk.services.SearchService;
 
@@ -37,6 +41,15 @@ public class MsgqApplication extends SpringBootServletInitializer {
 		} catch (Exception e) {
 			searchService.setMapping();
 		}
+	}
+	
+	
+	@Bean(name = "restClient")
+	public RestTemplate getRestClient() {
+		RestTemplate restClient = new RestTemplate();
+		restClient.getMessageConverters()
+        .add(0, new StringHttpMessageConverter(Charset.forName("UTF-8")));
+		return restClient;
 	}
 //
 //	@Autowired
