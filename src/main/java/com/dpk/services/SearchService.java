@@ -23,7 +23,7 @@ public interface SearchService {
 
 //	public void getAll();
 
-	public ClaimList searchClaimList(String dataSearch);
+	public String searchClaimList(String dataSearch);
 
 	// Mapping data from RabbitMQ to models
 

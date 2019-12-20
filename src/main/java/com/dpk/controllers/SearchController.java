@@ -40,8 +40,8 @@ public class SearchController {
 //	}
 	
 	@PostMapping(value = "/search", headers = "Accept=application/json")
-	public ResponseEntity<ClaimList> searchClaimList(@RequestBody String dataSearch) {
-		ClaimList returnList = searchService.searchClaimList(dataSearch);
-		return new ResponseEntity<ClaimList>(returnList,HttpStatus.FOUND);
+	public ResponseEntity<String> searchClaimList(@RequestBody String dataSearch) {
+		String returnList = searchService.searchClaimList(dataSearch);
+		return new ResponseEntity<String>(returnList,HttpStatus.FOUND);
 	}
 }

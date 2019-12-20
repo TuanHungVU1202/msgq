@@ -35,26 +35,44 @@ public class SearchServiceImpl implements SearchService {
 	@Autowired
 	private RestTemplate restClient;
 
-	@Value("${elasticsearch.base.url}")
-	private String elasticsearchBaseUrl;
-
-	@Value("${elasticsearch.index.uri}")
-	private String elasticsearchIndexUri;
-
-	@Value("${elasticsearch.type.uri.details}")
-	private String elasticsearchTypeDetails;
+//	@Value("${elasticsearch.base.url}")
+//	private String elasticsearchBaseUrl;
+//
+//	@Value("${elasticsearch.index.uri}")
+//	private String elasticsearchIndexUri;
+//
+//	@Value("${elasticsearch.type.uri.details}")
+//	private String elasticsearchTypeDetails;
+//	
+//	@Value("${elasticsearch.type.uri.list}")
+//	private String elasticsearchTypeList;
 	
-	@Value("${elasticsearch.type.uri.list}")
-	private String elasticsearchTypeList;
+	@Value("${elasticsearch.check.mapping}")
+	private String urlCheckMapping;
 	
-	private String URL_CHECK_STATUS_LIST = "";
+	@Value("${elasticsearch.set.mapping}")
+	private String urlSetMapping;
+	
+	@Value("${elasticsearch.search.list}")
+	private String urlSearchList;
+	
+	@Value("${elasticsearch.search.details}")
+	private String urlSearchDetails;
+	
+	@Value("${elasticsearch.claim.details}")
+	private String urlClaimDetails;
+	
+	@Value("${elasticsearch.claim.list}")
+	private String urlClaimList;
+	
+//	private String URL_CHECK_STATUS_LIST = "";
 
-	String URL_SET_MAPPING = "http://" + elasticsearchBaseUrl + "/" + elasticsearchIndexUri;
+//	String URL_SET_MAPPING = "http://" + elasticsearchBaseUrl + "/" + elasticsearchIndexUri;
 
-	String URL_SEARCH_LIST = "http://" + elasticsearchBaseUrl + "/" + elasticsearchIndexUri + "/" + elasticsearchTypeList
-			+ "/_search";
-	String URL_SEARCH_DETAILS = "http://" + elasticsearchBaseUrl + "/" + elasticsearchIndexUri + "/" + elasticsearchTypeDetails
-			+ "/_search";
+//	String URL_SEARCH_LIST = "http://" + elasticsearchBaseUrl + "/" + elasticsearchIndexUri + "/" + elasticsearchTypeList
+//			+ "/_search";
+//	String URL_SEARCH_DETAILS = "http://" + elasticsearchBaseUrl + "/" + elasticsearchIndexUri + "/" + elasticsearchTypeDetails
+//			+ "/_search";
 
 //	String URL_SET_MAPPING = "http://localhost:9600/claim";
 
@@ -62,11 +80,11 @@ public class SearchServiceImpl implements SearchService {
 
 	String idToCreate;
 
-	public SearchServiceImpl() {
-		// TODO Auto-generated constructor stub
-		URL_CHECK_STATUS_LIST = "http://" + elasticsearchBaseUrl + "/" + elasticsearchIndexUri + "/"
-				+ elasticsearchTypeList;
-	}
+//	public SearchServiceImpl() {
+//		// TODO Auto-generated constructor stub
+//		URL_CHECK_STATUS_LIST = "http://" + elasticsearchBaseUrl + "/" + elasticsearchIndexUri + "/"
+//				+ elasticsearchTypeList;
+//	}
 	
 	@Override
 	public void getUserClaimDetails() {
@@ -101,7 +119,7 @@ public class SearchServiceImpl implements SearchService {
 
 		try {
 			HttpEntity<String> httpEntity = new HttpEntity<String>(mappingClaimList, httpHeaders);
-			ResponseEntity<String> responseEntity = restClient.exchange(URL_SET_MAPPING, HttpMethod.PUT, httpEntity,
+			ResponseEntity<String> responseEntity = restClient.exchange(urlSetMapping, HttpMethod.PUT, httpEntity,
 					String.class);
 		} catch (Exception e) {
 			log.error(e.toString());
@@ -117,7 +135,7 @@ public class SearchServiceImpl implements SearchService {
 		httpHeaders.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
 
 		HttpEntity<String> httpEntity = new HttpEntity<String>(httpHeaders);
-		ResponseEntity<String> responseEntity = restClient.exchange(URL_CHECK_STATUS_LIST, HttpMethod.GET, httpEntity,
+		ResponseEntity<String> responseEntity = restClient.exchange(urlCheckMapping, HttpMethod.GET, httpEntity,
 				String.class);
 
 		return responseEntity.getStatusCode();
@@ -158,8 +176,8 @@ public class SearchServiceImpl implements SearchService {
 //	}
 
 	@Override
-	public ClaimList searchClaimList(String dataSearch) {
-		ClaimList claimList = new ClaimList();
+	public String searchClaimList(String dataSearch) {
+//		ClaimList claimList = new ClaimList();
 		
 		String bodyString = "{\r\n" + 
 				"    \"query\": {\r\n" + 
@@ -186,10 +204,11 @@ public class SearchServiceImpl implements SearchService {
 		httpHeaders.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
 
 		HttpEntity<String> httpEntity = new HttpEntity<String>(parsedData, httpHeaders);
-		ResponseEntity<String> responseEntity = restClient.exchange(URL_SEARCH_LIST, HttpMethod.GET, httpEntity,
+		ResponseEntity<String> responseEntity = restClient.exchange(urlSearchList, HttpMethod.GET, httpEntity,
 				String.class);
+		String returnString = responseEntity.getBody();
 
-		return claimList;
+		return returnString;
 	}
 
 	@Override
@@ -210,8 +229,8 @@ public class SearchServiceImpl implements SearchService {
 		ClaimList returnClaimList = mapToClaimList(json);
 
 		// Putting data to elasticsearch
-		String URL_CLAIM_DETAILS = "http://localhost:9600/claim/details/1";
-		String URL_CLAIM_LIST = "http://localhost:9600/claim/list/1";
+//		String URL_CLAIM_DETAILS = "http://localhost:9600/claim/details/1";
+//		String URL_CLAIM_LIST = "http://localhost:9600/claim/list/1";
 
 		HttpHeaders httpHeaders = new HttpHeaders();
 		httpHeaders.setContentType(MediaType.APPLICATION_JSON);
@@ -220,9 +239,9 @@ public class SearchServiceImpl implements SearchService {
 		HttpEntity<ClaimList> claimListEntity = new HttpEntity<ClaimList>(returnClaimList, httpHeaders);
 		HttpEntity<ClaimDetails> claimDetailsEntity = new HttpEntity<ClaimDetails>(returnClaimDetails, httpHeaders);
 
-		ResponseEntity<String> responseClaimList = restClient.exchange(URL_CLAIM_LIST, HttpMethod.PUT, claimListEntity,
+		ResponseEntity<String> responseClaimList = restClient.exchange(urlClaimList + "/1", HttpMethod.PUT, claimListEntity,
 				String.class);
-		ResponseEntity<String> responseClaimDetails = restClient.exchange(URL_CLAIM_DETAILS, HttpMethod.PUT,
+		ResponseEntity<String> responseClaimDetails = restClient.exchange(urlClaimDetails + "/1", HttpMethod.PUT,
 				claimDetailsEntity, String.class);
 
 		return jsonRawString;
