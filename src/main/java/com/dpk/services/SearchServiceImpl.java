@@ -2,6 +2,9 @@ package com.dpk.services;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.sql.Date;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 
 import org.slf4j.Logger;
@@ -103,11 +106,20 @@ public class SearchServiceImpl implements SearchService {
 
 	@Override
 	public void setMapping() throws IOException {
-		String mappingClaimList = "{\r\n" + "    \"mappings\": {\r\n" + "        \"list\": {\r\n"
-				+ "            \"properties\": {\r\n" + "                \"claimId\": {\r\n"
-				+ "                    \"type\": \"text\"\r\n" + "                },\r\n"
-				+ "                \"proposerName\": {\r\n" + "                    \"type\": \"text\"\r\n"
-				+ "                }\r\n" + "            }\r\n" + "        }\r\n" + "    }\r\n" + "}";
+		String mappingClaimList = "{\r\n" + 
+				"    \"mappings\": {\r\n" + 
+				"        \"list\": {\r\n" + 
+				"            \"properties\": {\r\n" + 
+				"                \"claimId\": {\r\n" + 
+				"                    \"type\": \"keyword\"\r\n" + 
+				"                },\r\n" + 
+				"                \"proposerName\": {\r\n" + 
+				"                    \"type\": \"keyword\"\r\n" + 
+				"                }\r\n" + 
+				"            }\r\n" + 
+				"        }\r\n" + 
+				"    }\r\n" + 
+				"}";
 
 //		RestTemplate restTemplate = new RestTemplate();
 
@@ -177,21 +189,36 @@ public class SearchServiceImpl implements SearchService {
 	public String searchClaimList(String dataSearch) {
 //		ClaimList claimList = new ClaimList();
 
-		String bodyString = "{\r\n" + "    \"query\": {\r\n" + "        \"bool\": {\r\n"
-				+ "            \"should\": [\r\n" + "                {\r\n" + "                    \"match\": {\r\n"
-				+ "                        \"claimId\": \"%s\"\r\n" + "                    }\r\n"
-				+ "                },\r\n" + "                {\r\n" + "                    \"match\": {\r\n"
-				+ "                        \"proposerName\": \"%s\"\r\n" + "                    }\r\n"
-				+ "                }\r\n" + "            ]\r\n" + "        }\r\n" + "    }\r\n" + "}";
-		String parsedData = String.format(bodyString, dataSearch, dataSearch);
+		String bodyToPost = "{\r\n" + 
+				" \"query\": {\r\n" + 
+				"          \"bool\": {\r\n" + 
+				"              \"should\": [\r\n" + 
+				"                {\r\n" + 
+				"                  \"wildcard\": { \"claimId\": \"*%s*\"}\r\n" + 
+				"                },\r\n" + 
+				"                {\r\n" + 
+				"                  \"wildcard\": { \"proposerName\": \"*%s*\"}\r\n" + 
+				"                }\r\n" + 
+				"              ],\r\n" + 
+				"              \"minimum_should_match\": 1\r\n" + 
+				"          }\r\n" + 
+				"      }\r\n" + 
+				"}";
+		
+	
+		
+		String parsedData = String.format(bodyToPost, dataSearch, dataSearch);
 
+		JSONObject json = Utils.parseToJsonObject(parsedData);
+		
 		HttpHeaders httpHeaders = new HttpHeaders();
 		httpHeaders.setContentType(MediaType.APPLICATION_JSON);
 		httpHeaders.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
 
-		HttpEntity<String> httpEntity = new HttpEntity<String>(parsedData, httpHeaders);
-		ResponseEntity<String> responseEntity = restClient.exchange(urlSearchList, HttpMethod.GET, httpEntity,
+		HttpEntity<String> httpEntity = new HttpEntity<String>(json.toString(), httpHeaders);
+		ResponseEntity<String> responseEntity = restClient.exchange(urlSearchList, HttpMethod.POST, httpEntity,
 				String.class);
+	
 		String returnString = responseEntity.getBody();
 
 		return returnString;
@@ -212,10 +239,6 @@ public class SearchServiceImpl implements SearchService {
 
 		ClaimDetails returnClaimDetails = mapToClaimDetails(json);
 		ClaimList returnClaimList = mapToClaimList(json);
-
-		// Putting data to elasticsearch
-//		String URL_CLAIM_DETAILS = "http://localhost:9600/claim/details/1";
-//		String URL_CLAIM_LIST = "http://localhost:9600/claim/list/1";
 
 		try {
 			Long getClaim = json.getJSONObject("claim").getLong("id");
@@ -384,6 +407,16 @@ public class SearchServiceImpl implements SearchService {
 
 			getClaimList = json.getJSONObject("claim").getString("status");
 			claimList.setStatus(getClaimList);
+			
+			//Testing
+			
+			getClaimList = json.getJSONObject("claim").getString("createdDate");
+			Long parsedCreatedDate = Long.parseLong(getClaimList);
+			Date date = new Date(parsedCreatedDate);
+			DateFormat formater = new SimpleDateFormat("dd/MM/yyyy hh:mm a");
+			String formattedDate = formater.format(date);
+ 			log.info(formattedDate);
+			
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}

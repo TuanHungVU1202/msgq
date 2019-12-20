@@ -1,6 +1,7 @@
 package com.dpk.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.configurationprocessor.json.JSONObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.dpk.common.Utils;
 import com.dpk.models.Claim;
 import com.dpk.models.ClaimList;
 import com.dpk.services.SearchService;
@@ -38,10 +40,16 @@ public class SearchController {
 //		String claimJson = searchService.createClaim(claimRequest, id);
 //		return new ResponseEntity<String>(claimJson, HttpStatus.CREATED);
 //	}
-	
+
 	@PostMapping(value = "/search", headers = "Accept=application/json")
 	public ResponseEntity<String> searchClaimList(@RequestBody String dataSearch) {
-		String returnList = searchService.searchClaimList(dataSearch);
-		return new ResponseEntity<String>(returnList,HttpStatus.FOUND);
+		String returnList="";
+		try {
+			JSONObject json = Utils.parseToJsonObject(dataSearch);
+			returnList = searchService.searchClaimList(json.get("search").toString());
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		return new ResponseEntity<String>(returnList, HttpStatus.FOUND);
 	}
 }
