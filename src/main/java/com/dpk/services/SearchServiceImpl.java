@@ -401,22 +401,23 @@ public class SearchServiceImpl implements SearchService {
 
 			getClaimList = json.getJSONObject("claim").getString("createdDate");
 			claimList.setCreatedDate(getClaimList);
+			String createdDate = Utils.parseToDateString(getClaimList);
+			log.info("created Date: "+createdDate);
 
 			getClaimList = json.getJSONObject("claim").getString("lastModified");
 			claimList.setLastModified(getClaimList);
-
+			String lastModified = Utils.parseToDateString(getClaimList);
+			log.info("lastModified Date: " +lastModified);
+			
 			getClaimList = json.getJSONObject("claim").getString("status");
 			claimList.setStatus(getClaimList);
-			
-			//Testing
-			
-			getClaimList = json.getJSONObject("claim").getString("createdDate");
-			Long parsedCreatedDate = Long.parseLong(getClaimList);
-			Date date = new Date(parsedCreatedDate);
-			DateFormat formater = new SimpleDateFormat("dd/MM/yyyy hh:mm a");
-			String formattedDate = formater.format(date);
- 			log.info(formattedDate);
-			
+
+//			Long parsedCreatedDate = Long.parseLong(getClaimList);
+//			
+//			Date date = new Date(parsedCreatedDate);
+//			DateFormat formater = new SimpleDateFormat("dd/MM/yyyy hh:mm a");
+//			String formattedDate = formater.format(date);
+// 			log.info(formattedDate);			
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}

@@ -1,5 +1,9 @@
 package com.dpk.common;
 
+import java.sql.Date;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+
 import org.springframework.boot.configurationprocessor.json.JSONException;
 import org.springframework.boot.configurationprocessor.json.JSONObject;
 
@@ -14,5 +18,13 @@ public class Utils {
 			e.printStackTrace();
 		}
 		return jsonObject;
+	}
+	
+	public static String parseToDateString(String timeInString) {
+		Long parsedCreatedDate = Long.parseLong(timeInString);
+		Date date = new Date(parsedCreatedDate);
+		DateFormat formater = new SimpleDateFormat("dd/MM/yyyy hh:mm a");
+		String formattedDate = formater.format(date);
+		return formattedDate;
 	}
 }
