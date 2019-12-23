@@ -11,6 +11,7 @@ public class ClaimDetails {
 	private String status;
 	private String claimantName;
 	private String proposerName;
+	private String proposerNameNonAccent;
 	private String dateOfBirth;
 	private String dateOfVisit;
 	private String causeOfIncident;
@@ -107,6 +108,14 @@ public class ClaimDetails {
 
 	public void setProposerName(String proposerName) {
 		this.proposerName = proposerName;
+	}
+
+	public String getProposerNameNonAccent() {
+		return proposerNameNonAccent;
+	}
+
+	public void setProposerNameNonAccent(String proposerNameNonAccent) {
+		this.proposerNameNonAccent = proposerNameNonAccent;
 	}
 
 	public String getDateOfBirth() {

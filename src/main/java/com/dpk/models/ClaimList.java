@@ -4,6 +4,7 @@ public class ClaimList {
 	private String claimId;
 	private String claimantName;
 	private String proposerName;
+	private String proposerNameNonAccent;
 	private String policyNumber;
 	private String createdDate;
 	private String lastModified;
@@ -31,6 +32,14 @@ public class ClaimList {
 
 	public void setProposerName(String proposerName) {
 		this.proposerName = proposerName;
+	}
+
+	public String getProposerNameNonAccent() {
+		return proposerNameNonAccent;
+	}
+
+	public void setProposerNameNonAccent(String proposerNameNonAccent) {
+		this.proposerNameNonAccent = proposerNameNonAccent;
 	}
 
 	public String getPolicyNumber() {

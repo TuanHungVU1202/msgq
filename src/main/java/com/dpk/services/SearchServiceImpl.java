@@ -169,14 +169,29 @@ public class SearchServiceImpl implements SearchService {
 	 */
 	@Override
 	public void setMapping() throws IOException {
-		String mappingClaimList = "{\r\n" + "    \"mappings\": {\r\n" + "        \"list\": {\r\n"
-				+ "            \"properties\": {\r\n" + "                \"claimId\": {\r\n"
-				+ "                    \"type\": \"keyword\"\r\n" + "                },\r\n"
-				+ "                \"proposerName\": {\r\n" + "                    \"type\": \"keyword\"\r\n"
-				+ "                },\r\n" + "                \"createdDate\": {\r\n"
-				+ "                    \"type\": \"date\"\r\n" + "                },\r\n"
-				+ "                \"lastModified\": {\r\n" + "                    \"type\": \"date\"\r\n"
-				+ "                }\r\n" + "            }\r\n" + "        }\r\n" + "    }\r\n" + "}";
+		String mappingClaimList = "{\r\n" + 
+				"    \"mappings\": {\r\n" + 
+				"        \"list\": {\r\n" + 
+				"            \"properties\": {\r\n" + 
+				"                \"claimId\": {\r\n" + 
+				"                    \"type\": \"keyword\"\r\n" + 
+				"                },\r\n" + 
+				"                \"proposerName\": {\r\n" + 
+				"                    \"type\": \"keyword\"\r\n" + 
+				"                },\r\n" + 
+				"                \"proposerNameNonAccent\": {\r\n" + 
+				"                    \"type\": \"keyword\"\r\n" + 
+				"                },				\r\n" + 
+				"                \"createdDate\": {\r\n" + 
+				"                    \"type\": \"date\"\r\n" + 
+				"                },\r\n" + 
+				"                \"lastModified\": {\r\n" + 
+				"                    \"type\": \"date\"\r\n" + 
+				"                }\r\n" + 
+				"            }\r\n" + 
+				"        }\r\n" + 
+				"    }\r\n" + 
+				"}";
 
 		HttpHeaders httpHeaders = new HttpHeaders();
 		httpHeaders.setContentType(MediaType.APPLICATION_JSON);
@@ -240,14 +255,27 @@ public class SearchServiceImpl implements SearchService {
 	public String searchClaimList(String dataSearch) {
 //		ClaimList claimList = new ClaimList();
 
-		String bodyToPost = "{\r\n" + " \"query\": {\r\n" + "          \"bool\": {\r\n"
-				+ "              \"should\": [\r\n" + "                {\r\n"
-				+ "                  \"wildcard\": { \"claimId\": \"*%s*\"}\r\n" + "                },\r\n"
-				+ "                {\r\n" + "                  \"wildcard\": { \"proposerName\": \"*%s*\"}\r\n"
-				+ "                }\r\n" + "              ],\r\n" + "              \"minimum_should_match\": 1\r\n"
-				+ "          }\r\n" + "      }\r\n" + "}";
+		String bodyToPost = "{\r\n" + 
+				" \"query\": {\r\n" + 
+				"          \"bool\": {\r\n" + 
+				"              \"should\": [\r\n" + 
+				"                {\r\n" + 
+				"                  \"wildcard\": { \"claimId\": \"*%s*\" }\r\n" + 
+				"                },\r\n" + 
+				"                {\r\n" + 
+				"                  \"wildcard\": { \"proposerName\": \"*%s*\" }\r\n" + 
+				"                },\r\n" + 
+				"                {\r\n" + 
+				"                  \"wildcard\": { \"proposerNameNonAccent\": \"%s\" }\r\n" + 
+				"                }\r\n" + 
+				"              ],\r\n" + 
+				"              \"minimum_should_match\": 1\r\n" + 
+				"          }\r\n" + 
+				"      }\r\n" + 
+				"}";
 
-		String parsedData = String.format(bodyToPost, dataSearch, dataSearch);
+		String removedAccentData = Utils.removeAccent(dataSearch);
+		String parsedData = String.format(bodyToPost, dataSearch, dataSearch, dataSearch);
 
 		JSONObject json = Utils.parseToJsonObject(parsedData);
 
@@ -308,6 +336,7 @@ public class SearchServiceImpl implements SearchService {
 		String jsonRawString = parser.parse(dataToSend).getAsString();
 		JSONObject json = Utils.parseToJsonObject(jsonRawString);
 
+		//TODO: put data to proposerNameNonAccent
 		ClaimDetails returnClaimDetails = mapToClaimDetails(json);
 		ClaimList returnClaimList = mapToClaimList(json);
 
@@ -386,6 +415,10 @@ public class SearchServiceImpl implements SearchService {
 			getClaimDetails = json.getJSONObject("claimRequest").getJSONObject("proposerDetails")
 					.getString("proposerName");
 			claimDetails.setProposerName(getClaimDetails);
+			
+			getClaimDetails = json.getJSONObject("claimRequest").getJSONObject("proposerDetails")
+					.getString("proposerName");
+			claimDetails.setProposerNameNonAccent(Utils.removeAccent(getClaimDetails));
 
 			getClaimDetails = json.getJSONObject("claimRequest").getJSONObject("proposerDetails")
 					.getString("dateOfBirth");
@@ -472,6 +505,10 @@ public class SearchServiceImpl implements SearchService {
 			getClaimList = json.getJSONObject("claimRequest").getJSONObject("proposerDetails")
 					.getString("proposerName");
 			claimList.setProposerName(getClaimList);
+			
+			getClaimList = json.getJSONObject("claimRequest").getJSONObject("proposerDetails")
+					.getString("proposerName");
+			claimList.setProposerNameNonAccent(Utils.removeAccent(getClaimList));
 
 			getClaimList = json.getJSONObject("claim").getString("policyNumber");
 			claimList.setPolicyNumber(getClaimList);
