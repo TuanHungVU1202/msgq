@@ -2,9 +2,6 @@ package com.dpk.services;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.sql.Date;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Arrays;
 
 import org.slf4j.Logger;
@@ -91,7 +88,6 @@ public class SearchServiceImpl implements SearchService {
 	 */
 	@Override
 	public String getAllList() {
-
 		HttpHeaders httpHeaders = new HttpHeaders();
 		httpHeaders.setContentType(MediaType.APPLICATION_JSON);
 		httpHeaders.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
@@ -103,13 +99,12 @@ public class SearchServiceImpl implements SearchService {
 
 		return responseEntity.getBody();
 	}
-	
+
 	/*
 	 * Get All Claim Details
 	 */
 	@Override
 	public String getAllDetails() {
-
 		HttpHeaders httpHeaders = new HttpHeaders();
 		httpHeaders.setContentType(MediaType.APPLICATION_JSON);
 		httpHeaders.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
@@ -125,7 +120,6 @@ public class SearchServiceImpl implements SearchService {
 	// TODO: getClaimList
 	@Override
 	public String getClaimList(String id) {
-
 		String queryRawUrl = urlClaimList + "/%s";
 		String parsedUrl = String.format(queryRawUrl, id);
 
@@ -140,11 +134,10 @@ public class SearchServiceImpl implements SearchService {
 
 		return responseEntity.getBody();
 	}
-	
+
 	// TODO: Get claimDetails
 	@Override
 	public String getClaimDetails(String id) {
-
 		String queryRawUrl = urlClaimDetails + "/%s";
 		String parsedUrl = String.format(queryRawUrl, id);
 
@@ -161,37 +154,21 @@ public class SearchServiceImpl implements SearchService {
 	}
 
 	/*
-	 * Set mapping for data
-	 * 		claimId: keyword
-	 * 		proposerName: keyword
-	 * 		createdDate: date
-	 * 		lastModified: date
+	 * Set mapping for data claimId: keyword proposerName: keyword createdDate: date
+	 * lastModified: date
 	 */
 	@Override
 	public void setMapping() throws IOException {
-		String mappingClaimList = "{\r\n" + 
-				"    \"mappings\": {\r\n" + 
-				"        \"list\": {\r\n" + 
-				"            \"properties\": {\r\n" + 
-				"                \"claimId\": {\r\n" + 
-				"                    \"type\": \"keyword\"\r\n" + 
-				"                },\r\n" + 
-				"                \"proposerName\": {\r\n" + 
-				"                    \"type\": \"keyword\"\r\n" + 
-				"                },\r\n" + 
-				"                \"proposerNameNonAccent\": {\r\n" + 
-				"                    \"type\": \"keyword\"\r\n" + 
-				"                },				\r\n" + 
-				"                \"createdDate\": {\r\n" + 
-				"                    \"type\": \"date\"\r\n" + 
-				"                },\r\n" + 
-				"                \"lastModified\": {\r\n" + 
-				"                    \"type\": \"date\"\r\n" + 
-				"                }\r\n" + 
-				"            }\r\n" + 
-				"        }\r\n" + 
-				"    }\r\n" + 
-				"}";
+		String mappingClaimList = "{\r\n" + "    \"mappings\": {\r\n" + "        \"list\": {\r\n"
+				+ "            \"properties\": {\r\n" + "                \"claimId\": {\r\n"
+				+ "                    \"type\": \"keyword\"\r\n" + "                },\r\n"
+				+ "                \"proposerName\": {\r\n" + "                    \"type\": \"keyword\"\r\n"
+				+ "                },\r\n" + "                \"proposerNameNonAccent\": {\r\n"
+				+ "                    \"type\": \"keyword\"\r\n" + "                },				\r\n"
+				+ "                \"createdDate\": {\r\n" + "                    \"type\": \"date\"\r\n"
+				+ "                },\r\n" + "                \"lastModified\": {\r\n"
+				+ "                    \"type\": \"date\"\r\n" + "                }\r\n" + "            }\r\n"
+				+ "        }\r\n" + "    }\r\n" + "}";
 
 		HttpHeaders httpHeaders = new HttpHeaders();
 		httpHeaders.setContentType(MediaType.APPLICATION_JSON);
@@ -211,7 +188,6 @@ public class SearchServiceImpl implements SearchService {
 	 */
 	@Override
 	public HttpStatus getMappingStatus() {
-
 		HttpHeaders httpHeaders = new HttpHeaders();
 		httpHeaders.setContentType(MediaType.APPLICATION_JSON);
 		httpHeaders.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
@@ -243,36 +219,21 @@ public class SearchServiceImpl implements SearchService {
 //		return jsonInString;
 //	}
 
-	
 	/*
-	 * Search by ClaimId or proposerName
-	 * Passed argument: 
-	 * {
-	 * 	"search": ""
-	 * }
+	 * Search by ClaimId or proposerName Passed argument: { "search": "" }
 	 */
 	@Override
 	public String searchClaimList(String dataSearch) {
 //		ClaimList claimList = new ClaimList();
 
-		String bodyToPost = "{\r\n" + 
-				" \"query\": {\r\n" + 
-				"          \"bool\": {\r\n" + 
-				"              \"should\": [\r\n" + 
-				"                {\r\n" + 
-				"                  \"wildcard\": { \"claimId\": \"*%s*\" }\r\n" + 
-				"                },\r\n" + 
-				"                {\r\n" + 
-				"                  \"wildcard\": { \"proposerName\": \"*%s*\" }\r\n" + 
-				"                },\r\n" + 
-				"                {\r\n" + 
-				"                  \"wildcard\": { \"proposerNameNonAccent\": \"%s\" }\r\n" + 
-				"                }\r\n" + 
-				"              ],\r\n" + 
-				"              \"minimum_should_match\": 1\r\n" + 
-				"          }\r\n" + 
-				"      }\r\n" + 
-				"}";
+		String bodyToPost = "{\r\n" + " \"query\": {\r\n" + "          \"bool\": {\r\n"
+				+ "              \"should\": [\r\n" + "                {\r\n"
+				+ "                  \"wildcard\": { \"claimId\": \"*%s*\" }\r\n" + "                },\r\n"
+				+ "                {\r\n" + "                  \"wildcard\": { \"proposerName\": \"*%s*\" }\r\n"
+				+ "                },\r\n" + "                {\r\n"
+				+ "                  \"wildcard\": { \"proposerNameNonAccent\": \"%s\" }\r\n" + "                }\r\n"
+				+ "              ],\r\n" + "              \"minimum_should_match\": 1\r\n" + "          }\r\n"
+				+ "      }\r\n" + "}";
 
 		String removedAccentData = Utils.removeAccent(dataSearch);
 		String parsedData = String.format(bodyToPost, dataSearch, dataSearch, dataSearch);
@@ -293,14 +254,10 @@ public class SearchServiceImpl implements SearchService {
 	}
 
 	/*
-	 * Date sort
-	 * Passed argument: 
-	 * {
-	 * 	"order": "asc" (or desc)
-	 * }
+	 * Date sort Passed argument: { "order": "asc" (or desc) }
 	 */
 	@Override
-	public String sortDate(String order) {
+	public String sortCreatedDate(String order) {
 		String orderString = "{\r\n" + "  \"query\": {\r\n" + "    \"match_all\": {}\r\n" + "  },\r\n"
 				+ "  \"sort\": [\r\n" + "    {\r\n" + "      \"createdDate\": {\r\n" + "        \"order\": \"%s\"\r\n"
 				+ "      }\r\n" + "    }\r\n" + "  ]\r\n" + "}";
@@ -322,8 +279,33 @@ public class SearchServiceImpl implements SearchService {
 	}
 
 	/*
-	 * Handle messages recieved from RabbitMq
-	 * Then PUT to Elasticsearch (update if already existed)
+	 * Date sort Passed argument: { "order": "asc" (or desc) }
+	 */
+	@Override
+	public String sortLastModified(String order) {
+		String orderString = "{\r\n" + "  \"query\": {\r\n" + "    \"match_all\": {}\r\n" + "  },\r\n"
+				+ "  \"sort\": [\r\n" + "    {\r\n" + "      \"lastModified\": {\r\n" + "        \"order\": \"%s\"\r\n"
+				+ "      }\r\n" + "    }\r\n" + "  ]\r\n" + "}";
+
+		String parsedData = String.format(orderString, order);
+		JSONObject json = Utils.parseToJsonObject(parsedData);
+
+		HttpHeaders httpHeaders = new HttpHeaders();
+		httpHeaders.setContentType(MediaType.APPLICATION_JSON);
+		httpHeaders.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+
+		HttpEntity<String> httpEntity = new HttpEntity<String>(json.toString(), httpHeaders);
+		ResponseEntity<String> responseEntity = restClient.exchange(urlSearchList, HttpMethod.POST, httpEntity,
+				String.class);
+
+		String returnString = responseEntity.getBody();
+
+		return returnString;
+	}
+
+	/*
+	 * Handle messages recieved from RabbitMq Then PUT to Elasticsearch (update if
+	 * already existed)
 	 */
 	@Override
 	public String receiveMessage(Message message) throws IOException {
@@ -336,7 +318,7 @@ public class SearchServiceImpl implements SearchService {
 		String jsonRawString = parser.parse(dataToSend).getAsString();
 		JSONObject json = Utils.parseToJsonObject(jsonRawString);
 
-		//TODO: put data to proposerNameNonAccent
+		// TODO: put data to proposerNameNonAccent
 		ClaimDetails returnClaimDetails = mapToClaimDetails(json);
 		ClaimList returnClaimList = mapToClaimList(json);
 
@@ -415,7 +397,7 @@ public class SearchServiceImpl implements SearchService {
 			getClaimDetails = json.getJSONObject("claimRequest").getJSONObject("proposerDetails")
 					.getString("proposerName");
 			claimDetails.setProposerName(getClaimDetails);
-			
+
 			getClaimDetails = json.getJSONObject("claimRequest").getJSONObject("proposerDetails")
 					.getString("proposerName");
 			claimDetails.setProposerNameNonAccent(Utils.removeAccent(getClaimDetails));
@@ -505,7 +487,7 @@ public class SearchServiceImpl implements SearchService {
 			getClaimList = json.getJSONObject("claimRequest").getJSONObject("proposerDetails")
 					.getString("proposerName");
 			claimList.setProposerName(getClaimList);
-			
+
 			getClaimList = json.getJSONObject("claimRequest").getJSONObject("proposerDetails")
 					.getString("proposerName");
 			claimList.setProposerNameNonAccent(Utils.removeAccent(getClaimList));

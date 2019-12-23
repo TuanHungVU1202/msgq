@@ -6,7 +6,6 @@ import org.springframework.amqp.core.Message;
 import org.springframework.boot.configurationprocessor.json.JSONObject;
 import org.springframework.http.HttpStatus;
 
-import com.dpk.models.Claim;
 import com.dpk.models.ClaimDetails;
 import com.dpk.models.ClaimList;
 
@@ -14,7 +13,7 @@ public interface SearchService {
 	public String receiveMessage(Message message) throws IOException;
 
 	public String getClaimList(String id);
-	
+
 	public String getClaimDetails(String id);
 
 	public void setMapping() throws IOException;
@@ -24,12 +23,14 @@ public interface SearchService {
 //	public String createClaim(Claim claimBody, String id);
 
 	public String getAllList();
-	
+
 	public String getAllDetails();
 
 	public String searchClaimList(String dataSearch);
-	
-	public String sortDate(String order);
+
+	public String sortCreatedDate(String order);
+
+	public String sortLastModified(String order);
 
 	// Mapping data from RabbitMQ to models
 
