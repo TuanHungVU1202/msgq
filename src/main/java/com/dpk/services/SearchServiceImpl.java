@@ -29,6 +29,14 @@ import com.dpk.models.ClaimDetails;
 import com.dpk.models.ClaimList;
 import com.google.gson.JsonParser;
 
+/*
+ * Convert to json:
+ * 		JSONObject json = Utils.parseToJsonObject(string);
+ * 
+ * Passing variable to String: %s: string, %d: decimal
+ * 		String queryRawUrl = urlClaimDetails + "/%s";
+		String parsedUrl = String.format(queryRawUrl, id); 
+ */
 @Service
 public class SearchServiceImpl implements SearchService {
 	private static final Logger log = LoggerFactory.getLogger(SearchServiceImpl.class);
@@ -66,15 +74,6 @@ public class SearchServiceImpl implements SearchService {
 	@Value("${elasticsearch.claim.list}")
 	private String urlClaimList;
 
-//	private String URL_CHECK_STATUS_LIST = "";
-
-//	String URL_SET_MAPPING = "http://" + elasticsearchBaseUrl + "/" + elasticsearchIndexUri;
-
-//	String URL_SEARCH_LIST = "http://" + elasticsearchBaseUrl + "/" + elasticsearchIndexUri + "/" + elasticsearchTypeList
-//			+ "/_search";
-//	String URL_SEARCH_DETAILS = "http://" + elasticsearchBaseUrl + "/" + elasticsearchIndexUri + "/" + elasticsearchTypeDetails
-//			+ "/_search";
-
 //	String URL_SET_MAPPING = "http://localhost:9600/claim";
 
 //	String URL_SEARCH = "http://localhost:9600/claim/details/_search";
@@ -87,47 +86,97 @@ public class SearchServiceImpl implements SearchService {
 //				+ elasticsearchTypeList;
 //	}
 
+	/*
+	 * Get All Claim Lists
+	 */
 	@Override
-	public void getUserClaimDetails() {
-//		String url = "http://192.168.19.30:9600/claim/details/1";
-//
-//		RestTemplate restTemplate = new RestTemplate();
-//
-//		HttpHeaders httpHeaders = new HttpHeaders();
-//		httpHeaders.setContentType(MediaType.APPLICATION_JSON);
-//		httpHeaders.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
-//
-//		Claim claim = new Claim("1", "a", "BMI", "2019-07-01", "2019-12-31", null, 1000000000L, "true", null);
-//
-//		HttpEntity<Claim> httpEntity = new HttpEntity<>(claim, httpHeaders);
-//
-//		ResponseEntity<String> responseEntity = restTemplate.exchange(url, HttpMethod.POST, httpEntity, String.class);
+	public String getAllList() {
+
+		HttpHeaders httpHeaders = new HttpHeaders();
+		httpHeaders.setContentType(MediaType.APPLICATION_JSON);
+		httpHeaders.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+
+		HttpEntity<String> httpEntity = new HttpEntity<String>(httpHeaders);
+
+		ResponseEntity<String> responseEntity = restClient.exchange(urlSearchList, HttpMethod.GET, httpEntity,
+				String.class);
+
+		return responseEntity.getBody();
+	}
+	
+	/*
+	 * Get All Claim Details
+	 */
+	@Override
+	public String getAllDetails() {
+
+		HttpHeaders httpHeaders = new HttpHeaders();
+		httpHeaders.setContentType(MediaType.APPLICATION_JSON);
+		httpHeaders.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+
+		HttpEntity<String> httpEntity = new HttpEntity<String>(httpHeaders);
+
+		ResponseEntity<String> responseEntity = restClient.exchange(urlSearchDetails, HttpMethod.GET, httpEntity,
+				String.class);
+
+		return responseEntity.getBody();
 	}
 
+	// TODO: getClaimList
+	@Override
+	public String getClaimList(String id) {
+
+		String queryRawUrl = urlClaimList + "/%s";
+		String parsedUrl = String.format(queryRawUrl, id);
+
+		HttpHeaders httpHeaders = new HttpHeaders();
+		httpHeaders.setContentType(MediaType.APPLICATION_JSON);
+		httpHeaders.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+
+		HttpEntity<String> httpEntity = new HttpEntity<String>(httpHeaders);
+
+		ResponseEntity<String> responseEntity = restClient.exchange(parsedUrl, HttpMethod.GET, httpEntity,
+				String.class);
+
+		return responseEntity.getBody();
+	}
+	
+	// TODO: Get claimDetails
+	@Override
+	public String getClaimDetails(String id) {
+
+		String queryRawUrl = urlClaimDetails + "/%s";
+		String parsedUrl = String.format(queryRawUrl, id);
+
+		HttpHeaders httpHeaders = new HttpHeaders();
+		httpHeaders.setContentType(MediaType.APPLICATION_JSON);
+		httpHeaders.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+
+		HttpEntity<String> httpEntity = new HttpEntity<String>(httpHeaders);
+
+		ResponseEntity<String> responseEntity = restClient.exchange(parsedUrl, HttpMethod.GET, httpEntity,
+				String.class);
+
+		return responseEntity.getBody();
+	}
+
+	/*
+	 * Set mapping for data
+	 * 		claimId: keyword
+	 * 		proposerName: keyword
+	 * 		createdDate: date
+	 * 		lastModified: date
+	 */
 	@Override
 	public void setMapping() throws IOException {
-		String mappingClaimList = "{\r\n" + 
-				"    \"mappings\": {\r\n" + 
-				"        \"list\": {\r\n" + 
-				"            \"properties\": {\r\n" + 
-				"                \"claimId\": {\r\n" + 
-				"                    \"type\": \"keyword\"\r\n" + 
-				"                },\r\n" + 
-				"                \"proposerName\": {\r\n" + 
-				"                    \"type\": \"keyword\"\r\n" + 
-				"                },\r\n" + 
-				"                \"createdDate\": {\r\n" + 
-				"                    \"type\": \"date\"\r\n" + 
-				"                },\r\n" + 
-				"                \"lastModified\": {\r\n" + 
-				"                    \"type\": \"date\"\r\n" + 
-				"                }\r\n" + 
-				"            }\r\n" + 
-				"        }\r\n" + 
-				"    }\r\n" + 
-				"}";
-
-//		RestTemplate restTemplate = new RestTemplate();
+		String mappingClaimList = "{\r\n" + "    \"mappings\": {\r\n" + "        \"list\": {\r\n"
+				+ "            \"properties\": {\r\n" + "                \"claimId\": {\r\n"
+				+ "                    \"type\": \"keyword\"\r\n" + "                },\r\n"
+				+ "                \"proposerName\": {\r\n" + "                    \"type\": \"keyword\"\r\n"
+				+ "                },\r\n" + "                \"createdDate\": {\r\n"
+				+ "                    \"type\": \"date\"\r\n" + "                },\r\n"
+				+ "                \"lastModified\": {\r\n" + "                    \"type\": \"date\"\r\n"
+				+ "                }\r\n" + "            }\r\n" + "        }\r\n" + "    }\r\n" + "}";
 
 		HttpHeaders httpHeaders = new HttpHeaders();
 		httpHeaders.setContentType(MediaType.APPLICATION_JSON);
@@ -142,9 +191,11 @@ public class SearchServiceImpl implements SearchService {
 		}
 	}
 
+	/*
+	 * Check mapping status whether exists
+	 */
 	@Override
 	public HttpStatus getMappingStatus() {
-//		RestTemplate restTemplate = new RestTemplate();
 
 		HttpHeaders httpHeaders = new HttpHeaders();
 		httpHeaders.setContentType(MediaType.APPLICATION_JSON);
@@ -177,46 +228,29 @@ public class SearchServiceImpl implements SearchService {
 //		return jsonInString;
 //	}
 
-//	@Override
-//	public void getAll() {
-////		RestTemplate restTemplate = new RestTemplate();
-//
-//		HttpHeaders httpHeaders = new HttpHeaders();
-//		httpHeaders.setContentType(MediaType.APPLICATION_JSON);
-//		httpHeaders.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
-//
-//		HttpEntity<String> httpEntity = new HttpEntity<String>(httpHeaders);
-//
-//		ResponseEntity<String> responseEntity = restClient.exchange(URL_SEARCH, HttpMethod.GET, httpEntity,
-//				String.class);
-//	}
-
+	
+	/*
+	 * Search by ClaimId or proposerName
+	 * Passed argument: 
+	 * {
+	 * 	"search": ""
+	 * }
+	 */
 	@Override
 	public String searchClaimList(String dataSearch) {
 //		ClaimList claimList = new ClaimList();
 
-		String bodyToPost = "{\r\n" + 
-				" \"query\": {\r\n" + 
-				"          \"bool\": {\r\n" + 
-				"              \"should\": [\r\n" + 
-				"                {\r\n" + 
-				"                  \"wildcard\": { \"claimId\": \"*%s*\"}\r\n" + 
-				"                },\r\n" + 
-				"                {\r\n" + 
-				"                  \"wildcard\": { \"proposerName\": \"*%s*\"}\r\n" + 
-				"                }\r\n" + 
-				"              ],\r\n" + 
-				"              \"minimum_should_match\": 1\r\n" + 
-				"          }\r\n" + 
-				"      }\r\n" + 
-				"}";
-		
-	
-		
+		String bodyToPost = "{\r\n" + " \"query\": {\r\n" + "          \"bool\": {\r\n"
+				+ "              \"should\": [\r\n" + "                {\r\n"
+				+ "                  \"wildcard\": { \"claimId\": \"*%s*\"}\r\n" + "                },\r\n"
+				+ "                {\r\n" + "                  \"wildcard\": { \"proposerName\": \"*%s*\"}\r\n"
+				+ "                }\r\n" + "              ],\r\n" + "              \"minimum_should_match\": 1\r\n"
+				+ "          }\r\n" + "      }\r\n" + "}";
+
 		String parsedData = String.format(bodyToPost, dataSearch, dataSearch);
 
 		JSONObject json = Utils.parseToJsonObject(parsedData);
-		
+
 		HttpHeaders httpHeaders = new HttpHeaders();
 		httpHeaders.setContentType(MediaType.APPLICATION_JSON);
 		httpHeaders.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
@@ -224,13 +258,14 @@ public class SearchServiceImpl implements SearchService {
 		HttpEntity<String> httpEntity = new HttpEntity<String>(json.toString(), httpHeaders);
 		ResponseEntity<String> responseEntity = restClient.exchange(urlSearchList, HttpMethod.POST, httpEntity,
 				String.class);
-	
+
 		String returnString = responseEntity.getBody();
 
 		return returnString;
 	}
-	
+
 	/*
+	 * Date sort
 	 * Passed argument: 
 	 * {
 	 * 	"order": "asc" (or desc)
@@ -238,23 +273,13 @@ public class SearchServiceImpl implements SearchService {
 	 */
 	@Override
 	public String sortDate(String order) {
-		String orderString = "{\r\n" + 
-				"  \"query\": {\r\n" + 
-				"    \"match_all\": {}\r\n" + 
-				"  },\r\n" + 
-				"  \"sort\": [\r\n" + 
-				"    {\r\n" + 
-				"      \"createdDate\": {\r\n" + 
-				"        \"order\": \"%s\"\r\n" + 
-				"      }\r\n" + 
-				"    }\r\n" + 
-				"  ]\r\n" + 
-				"}";
-		
-		
+		String orderString = "{\r\n" + "  \"query\": {\r\n" + "    \"match_all\": {}\r\n" + "  },\r\n"
+				+ "  \"sort\": [\r\n" + "    {\r\n" + "      \"createdDate\": {\r\n" + "        \"order\": \"%s\"\r\n"
+				+ "      }\r\n" + "    }\r\n" + "  ]\r\n" + "}";
+
 		String parsedData = String.format(orderString, order);
 		JSONObject json = Utils.parseToJsonObject(parsedData);
-		
+
 		HttpHeaders httpHeaders = new HttpHeaders();
 		httpHeaders.setContentType(MediaType.APPLICATION_JSON);
 		httpHeaders.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
@@ -262,17 +287,19 @@ public class SearchServiceImpl implements SearchService {
 		HttpEntity<String> httpEntity = new HttpEntity<String>(json.toString(), httpHeaders);
 		ResponseEntity<String> responseEntity = restClient.exchange(urlSearchList, HttpMethod.POST, httpEntity,
 				String.class);
-		
+
 		String returnString = responseEntity.getBody();
 
 		return returnString;
 	}
 
+	/*
+	 * Handle messages recieved from RabbitMq
+	 * Then PUT to Elasticsearch (update if already existed)
+	 */
 	@Override
 	public String receiveMessage(Message message) throws IOException {
-//		RestTemplate restTemplate = new RestTemplate();
 //		restTemplate.getMessageConverters().add(0, new StringHttpMessageConverter(Charset.forName("UTF-8")));
-//		Claim claimDetails = new Claim();
 
 		Mapper byteToObj = new Mapper();
 		JsonParser parser = new JsonParser();
@@ -319,6 +346,9 @@ public class SearchServiceImpl implements SearchService {
 		return jsonRawString;
 	}
 
+	/*
+	 * Map to claimDetails model
+	 */
 	@Override
 	public ClaimDetails mapToClaimDetails(JSONObject json) {
 		ClaimDetails claimDetails = new ClaimDetails();
@@ -426,6 +456,9 @@ public class SearchServiceImpl implements SearchService {
 		return claimDetails;
 	}
 
+	/*
+	 * Map to claimList model
+	 */
 	@Override
 	public ClaimList mapToClaimList(JSONObject json) {
 		ClaimList claimList = new ClaimList();
@@ -446,22 +479,16 @@ public class SearchServiceImpl implements SearchService {
 			getClaimList = json.getJSONObject("claim").getString("createdDate");
 			claimList.setCreatedDate(getClaimList);
 			String createdDate = Utils.parseToDateString(getClaimList);
-			log.info("created Date: "+createdDate);
+			log.info("created Date: " + createdDate);
 
 			getClaimList = json.getJSONObject("claim").getString("lastModified");
 			claimList.setLastModified(getClaimList);
 			String lastModified = Utils.parseToDateString(getClaimList);
-			log.info("lastModified Date: " +lastModified);
-			
+			log.info("lastModified Date: " + lastModified);
+
 			getClaimList = json.getJSONObject("claim").getString("status");
 			claimList.setStatus(getClaimList);
 
-//			Long parsedCreatedDate = Long.parseLong(getClaimList);
-//			
-//			Date date = new Date(parsedCreatedDate);
-//			DateFormat formater = new SimpleDateFormat("dd/MM/yyyy hh:mm a");
-//			String formattedDate = formater.format(date);
-// 			log.info(formattedDate);			
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}

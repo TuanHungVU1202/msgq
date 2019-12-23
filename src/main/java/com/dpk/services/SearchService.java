@@ -13,7 +13,9 @@ import com.dpk.models.ClaimList;
 public interface SearchService {
 	public String receiveMessage(Message message) throws IOException;
 
-	public void getUserClaimDetails();
+	public String getClaimList(String id);
+	
+	public String getClaimDetails(String id);
 
 	public void setMapping() throws IOException;
 
@@ -21,7 +23,9 @@ public interface SearchService {
 
 //	public String createClaim(Claim claimBody, String id);
 
-//	public void getAll();
+	public String getAllList();
+	
+	public String getAllDetails();
 
 	public String searchClaimList(String dataSearch);
 	
