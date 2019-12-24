@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.Message;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.configurationprocessor.json.JSONArray;
 import org.springframework.boot.configurationprocessor.json.JSONException;
 import org.springframework.boot.configurationprocessor.json.JSONObject;
 import org.springframework.http.HttpEntity;
@@ -96,6 +97,14 @@ public class SearchServiceImpl implements SearchService {
 
 		ResponseEntity<String> responseEntity = restClient.exchange(urlSearchList, HttpMethod.GET, httpEntity,
 				String.class);
+
+		ClaimList claimList = new ClaimList();
+		try {
+			JSONObject json = new JSONObject();
+			JSONArray getClaimList = json.getJSONObject("hits").getJSONArray("hits");
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
 
 		return responseEntity.getBody();
 	}
@@ -237,7 +246,6 @@ public class SearchServiceImpl implements SearchService {
 
 		String removedAccentData = Utils.removeAccent(dataSearch);
 		String parsedData = String.format(bodyToPost, dataSearch, dataSearch, dataSearch);
-
 		JSONObject json = Utils.parseToJsonObject(parsedData);
 
 		HttpHeaders httpHeaders = new HttpHeaders();
@@ -288,6 +296,37 @@ public class SearchServiceImpl implements SearchService {
 				+ "      }\r\n" + "    }\r\n" + "  ]\r\n" + "}";
 
 		String parsedData = String.format(orderString, order);
+		JSONObject json = Utils.parseToJsonObject(parsedData);
+
+		HttpHeaders httpHeaders = new HttpHeaders();
+		httpHeaders.setContentType(MediaType.APPLICATION_JSON);
+		httpHeaders.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+
+		HttpEntity<String> httpEntity = new HttpEntity<String>(json.toString(), httpHeaders);
+		ResponseEntity<String> responseEntity = restClient.exchange(urlSearchList, HttpMethod.POST, httpEntity,
+				String.class);
+
+		String returnString = responseEntity.getBody();
+
+		return returnString;
+	}
+
+	@Override
+	public String searchSortCreatedDate(String dataSearch, String order) {
+		String bodyToPost = "{\r\n" + "    \"query\": {\r\n" + "        \"bool\": {\r\n"
+				+ "            \"should\": [\r\n" + "                {\r\n" + "                    \"wildcard\": {\r\n"
+				+ "                        \"claimId\": \"*%s*\"\r\n" + "                    }\r\n"
+				+ "                },\r\n" + "                {\r\n" + "                    \"wildcard\": {\r\n"
+				+ "                        \"proposerName\": \"*%s*\"\r\n" + "                    }\r\n"
+				+ "                },\r\n" + "                {\r\n" + "                    \"wildcard\": {\r\n"
+				+ "                        \"proposerNameNonAccent\": \"*%s*\"\r\n" + "                    }\r\n"
+				+ "                }\r\n" + "            ],\r\n" + "            \"minimum_should_match\": 1\r\n"
+				+ "        }\r\n" + "    },\r\n" + "    \"sort\": [\r\n" + "        {\r\n"
+				+ "            \"createdDate\": {\r\n" + "                \"order\": \"%s\"\r\n" + "            }\r\n"
+				+ "        }\r\n" + "    ]\r\n" + "}";
+
+		String removedAccentData = Utils.removeAccent(dataSearch);
+		String parsedData = String.format(bodyToPost, dataSearch, dataSearch, dataSearch, order);
 		JSONObject json = Utils.parseToJsonObject(parsedData);
 
 		HttpHeaders httpHeaders = new HttpHeaders();
@@ -367,7 +406,7 @@ public class SearchServiceImpl implements SearchService {
 			String getClaimDetails = json.getJSONObject("claim").getString("claimId");
 			claimDetails.setClaimId(getClaimDetails);
 
-			getClaimDetails = json.getJSONObject("claim").getString("policyHolder");
+			getClaimDetails = json.getJSONObject("claim").getString("policyholder");
 			claimDetails.setPolicyholder(getClaimDetails);
 
 			getClaimDetails = json.getJSONObject("claim").getString("policyNumber");
@@ -507,7 +546,6 @@ public class SearchServiceImpl implements SearchService {
 
 			getClaimList = json.getJSONObject("claim").getString("status");
 			claimList.setStatus(getClaimList);
-
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}

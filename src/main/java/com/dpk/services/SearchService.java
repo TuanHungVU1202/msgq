@@ -32,6 +32,8 @@ public interface SearchService {
 
 	public String sortLastModified(String order);
 
+	public String searchSortCreatedDate(String dataSearch, String order);
+
 	// Mapping data from RabbitMQ to models
 
 	public ClaimDetails mapToClaimDetails(JSONObject json);

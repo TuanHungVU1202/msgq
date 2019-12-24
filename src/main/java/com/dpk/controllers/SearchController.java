@@ -5,6 +5,7 @@ import org.springframework.boot.configurationprocessor.json.JSONObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import com.dpk.common.Utils;
 import com.dpk.services.SearchService;
 
+@CrossOrigin
 @Controller
 @RequestMapping(value = "/claim")
 public class SearchController {
@@ -100,6 +102,19 @@ public class SearchController {
 		try {
 			JSONObject json = Utils.parseToJsonObject(order);
 			returnList = searchService.sortLastModified(json.get("order").toString());
+		} catch (Exception e) {
+		}
+		return new ResponseEntity<String>(returnList, HttpStatus.FOUND);
+	}
+
+	@PostMapping(value = "/search-sort/created-date", headers = "Accept=application/json")
+	public ResponseEntity<String> searchSortCreatedDate(@RequestBody String dataSearch, @RequestBody String order) {
+		String returnList = "";
+		try {
+			JSONObject jsonDataSearch = Utils.parseToJsonObject(dataSearch);
+			JSONObject jsonOrder = Utils.parseToJsonObject(order);
+			returnList = searchService.searchSortCreatedDate(jsonDataSearch.get("dataSearch").toString(),
+					jsonOrder.get("order").toString());
 		} catch (Exception e) {
 		}
 		return new ResponseEntity<String>(returnList, HttpStatus.FOUND);
