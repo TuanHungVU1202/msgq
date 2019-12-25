@@ -98,13 +98,19 @@ public class SearchServiceImpl implements SearchService {
 		ResponseEntity<String> responseEntity = restClient.exchange(urlSearchList, HttpMethod.GET, httpEntity,
 				String.class);
 
-//		ClaimList claimList = new ClaimList();
 		try {
 			JSONObject json = Utils.parseToJsonObject(responseEntity.getBody());
 			JSONArray getClaimList = json.getJSONObject("hits").getJSONArray("hits");
 			JSONArray result = new JSONArray();
 			for (int i = 0; i < getClaimList.length(); i++) {
-				result.put(getClaimList.getJSONObject(i).getJSONObject("_source"));
+				String strId = getClaimList.getJSONObject(i).getString("_id");
+				JSONObject obj = getClaimList.getJSONObject(i).getJSONObject("_source");
+				String strParseCreatedDate = Utils.parseToDateString(obj.get("createdDate").toString());
+				String strParseLastModified = Utils.parseToDateString(obj.get("lastModified").toString());
+				obj.put("_id", strId);
+				obj.put("createdDate", strParseCreatedDate);
+				obj.put("lastModified", strParseLastModified);
+				result.put(obj);
 			}
 			log.info(result.toString());
 			return result.toString();
@@ -128,7 +134,26 @@ public class SearchServiceImpl implements SearchService {
 		ResponseEntity<String> responseEntity = restClient.exchange(urlSearchDetails, HttpMethod.GET, httpEntity,
 				String.class);
 
-		return responseEntity.getBody();
+		try {
+			JSONObject json = Utils.parseToJsonObject(responseEntity.getBody());
+			JSONArray getClaimList = json.getJSONObject("hits").getJSONArray("hits");
+			JSONArray result = new JSONArray();
+			for (int i = 0; i < getClaimList.length(); i++) {
+				String strId = getClaimList.getJSONObject(i).getString("_id");
+				JSONObject obj = getClaimList.getJSONObject(i).getJSONObject("_source");
+				String strParseCreatedDate = Utils.parseToDateString(obj.get("createdDate").toString());
+				String strParseLastModified = Utils.parseToDateString(obj.get("lastModified").toString());
+				obj.put("_id", strId);
+				obj.put("createdDate", strParseCreatedDate);
+				obj.put("lastModified", strParseLastModified);
+				result.put(obj);
+			}
+			log.info(result.toString());
+			return result.toString();
+		} catch (JSONException e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 
 	// TODO: getClaimList
@@ -261,9 +286,39 @@ public class SearchServiceImpl implements SearchService {
 		ResponseEntity<String> responseEntity = restClient.exchange(urlSearchList, HttpMethod.POST, httpEntity,
 				String.class);
 
-		String returnString = responseEntity.getBody();
+		try {
+			json = Utils.parseToJsonObject(responseEntity.getBody());
+			JSONArray getClaimList = json.getJSONObject("hits").getJSONArray("hits");
+			JSONArray result = new JSONArray();
+			for (int i = 0; i < getClaimList.length(); i++) {
+				String strId = getClaimList.getJSONObject(i).getString("_id");
+				JSONObject obj = getClaimList.getJSONObject(i).getJSONObject("_source");
+				String strParseCreatedDate = Utils.parseToDateString(obj.get("createdDate").toString());
+				String strParseLastModified = Utils.parseToDateString(obj.get("lastModified").toString());
+				obj.put("_id", strId);
+				obj.put("createdDate", strParseCreatedDate);
+				obj.put("lastModified", strParseLastModified);
+				result.put(obj);
+			}
+			log.info(result.toString());
+			return result.toString();
+		} catch (JSONException e) {
+			e.printStackTrace();
+			return null;
+		}
 
-		return returnString;
+//		String returnString = responseEntity.getBody();
+//
+//		return returnString;
+
+////	lst.stream().sorted(Comparator.comparing(a->a.get()))
+////	lst.sort(new Comparator<JSONObject>() {
+////		@Override
+////		public int compare(JSONObject o1, JSONObject o2) {
+//////			return o1.get("createdDate")
+////			//return o2.getAge() - o1.getAge();
+////		}
+////	});
 	}
 
 	/*

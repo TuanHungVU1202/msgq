@@ -32,7 +32,7 @@ public class SearchController {
 	}
 
 	/*
-	 * Get all claim Details
+	 * Get all claim details
 	 */
 	@GetMapping(value = "/details", headers = "Accept=application/json")
 	public ResponseEntity<String> getAllDetails() {
@@ -72,6 +72,7 @@ public class SearchController {
 	public ResponseEntity<String> searchClaimList(@RequestBody String dataSearch) {
 		String returnList = "";
 		try {
+			System.out.println(dataSearch);
 			JSONObject json = Utils.parseToJsonObject(dataSearch);
 			returnList = searchService.searchClaimList(json.get("search").toString());
 		} catch (Exception e) {
