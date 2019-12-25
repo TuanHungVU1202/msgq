@@ -77,7 +77,7 @@ public class SearchController {
 			returnList = searchService.searchClaimList(json.get("search").toString());
 		} catch (Exception e) {
 		}
-		return new ResponseEntity<String>(returnList, HttpStatus.FOUND);
+		return new ResponseEntity<String>(returnList, HttpStatus.OK);
 	}
 
 	/*

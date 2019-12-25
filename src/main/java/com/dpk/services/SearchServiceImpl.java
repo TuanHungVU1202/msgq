@@ -2,7 +2,10 @@ package com.dpk.services;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -189,7 +192,21 @@ public class SearchServiceImpl implements SearchService {
 		ResponseEntity<String> responseEntity = restClient.exchange(parsedUrl, HttpMethod.GET, httpEntity,
 				String.class);
 
-		return responseEntity.getBody();
+		try {
+			JSONObject json = Utils.parseToJsonObject(responseEntity.getBody());
+			String strId = json.getString("_id");
+			JSONObject obj = json.getJSONObject("_source");
+			String strParseCreatedDate = Utils.parseToDateString(obj.get("createdDate").toString());
+			String strParseLastModified = Utils.parseToDateString(obj.get("lastModified").toString());
+			obj.put("_id", strId);
+			obj.put("createdDate", strParseCreatedDate);
+			obj.put("lastModified", strParseLastModified);
+			log.info(obj.toString());
+			return obj.toString();
+		} catch (JSONException e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 
 	/*
@@ -290,6 +307,7 @@ public class SearchServiceImpl implements SearchService {
 			json = Utils.parseToJsonObject(responseEntity.getBody());
 			JSONArray getClaimList = json.getJSONObject("hits").getJSONArray("hits");
 			JSONArray result = new JSONArray();
+			List<JSONObject> lstArr = new ArrayList<JSONObject>();
 			for (int i = 0; i < getClaimList.length(); i++) {
 				String strId = getClaimList.getJSONObject(i).getString("_id");
 				JSONObject obj = getClaimList.getJSONObject(i).getJSONObject("_source");
@@ -298,9 +316,28 @@ public class SearchServiceImpl implements SearchService {
 				obj.put("_id", strId);
 				obj.put("createdDate", strParseCreatedDate);
 				obj.put("lastModified", strParseLastModified);
+				lstArr.add(obj);
 				result.put(obj);
 			}
 			log.info(result.toString());
+
+//			List<String> lstFinal = lstArr.stream().sorted((p1, p2) -> {
+//				try {
+//					return p1.get("createdDate").toString().compareTo(p2.get("createdDate").toString());
+//				} catch (JSONException e) {
+//					e.printStackTrace();
+//				}
+//				return 0;
+//			}).map(x -> {
+//				try {
+//					return (Utils.parseToDateString(x.get("createdDate").toString()));
+//				} catch (JSONException e) {
+//					e.printStackTrace();
+//				}
+//				return null;
+//			}).collect(Collectors.toList());
+
+//			List<String> result = lstArr.stream().sorted((p1,p2)->p1.compareTo(p2)).map(x->(parseToDateString(x))).collect(Collectors.toList());
 			return result.toString();
 		} catch (JSONException e) {
 			e.printStackTrace();
