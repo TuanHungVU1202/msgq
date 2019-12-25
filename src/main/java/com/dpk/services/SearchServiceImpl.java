@@ -98,15 +98,20 @@ public class SearchServiceImpl implements SearchService {
 		ResponseEntity<String> responseEntity = restClient.exchange(urlSearchList, HttpMethod.GET, httpEntity,
 				String.class);
 
-		ClaimList claimList = new ClaimList();
+//		ClaimList claimList = new ClaimList();
 		try {
-			JSONObject json = new JSONObject();
+			JSONObject json = Utils.parseToJsonObject(responseEntity.getBody());
 			JSONArray getClaimList = json.getJSONObject("hits").getJSONArray("hits");
+			JSONArray result = new JSONArray();
+			for (int i = 0; i < getClaimList.length(); i++) {
+				result.put(getClaimList.getJSONObject(i).getJSONObject("_source"));
+			}
+			log.info(result.toString());
+			return result.toString();
 		} catch (JSONException e) {
 			e.printStackTrace();
+			return null;
 		}
-
-		return responseEntity.getBody();
 	}
 
 	/*
@@ -406,8 +411,8 @@ public class SearchServiceImpl implements SearchService {
 			String getClaimDetails = json.getJSONObject("claim").getString("claimId");
 			claimDetails.setClaimId(getClaimDetails);
 
-			getClaimDetails = json.getJSONObject("claim").getString("policyholder");
-			claimDetails.setPolicyholder(getClaimDetails);
+			getClaimDetails = json.getJSONObject("claim").getString("policyHolder");
+			claimDetails.setPolicyHolder(getClaimDetails);
 
 			getClaimDetails = json.getJSONObject("claim").getString("policyNumber");
 			claimDetails.setPolicyNumber(getClaimDetails);

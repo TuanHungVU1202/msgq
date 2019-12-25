@@ -2,7 +2,7 @@ package com.dpk.models;
 
 public class ClaimDetails {
 	private String claimId;
-	private String policyholder;
+	private String policyHolder;
 	private String policyNumber;
 	private String policyStartDate;
 	private String policyEndDate;
@@ -38,12 +38,12 @@ public class ClaimDetails {
 		this.claimId = claimId;
 	}
 
-	public String getPolicyholder() {
-		return policyholder;
+	public String getPolicyHolder() {
+		return policyHolder;
 	}
 
-	public void setPolicyholder(String policyholder) {
-		this.policyholder = policyholder;
+	public void setPolicyHolder(String policyHolder) {
+		this.policyHolder = policyHolder;
 	}
 
 	public String getPolicyNumber() {
